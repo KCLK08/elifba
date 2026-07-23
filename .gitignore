@@ -1,1 +1,8 @@
 .DS_Store
+tmp/
+
+# Dependencies / build caches (also covered by mobile/.gitignore)
+**/node_modules/
+**/.expo/
+**/dist/
+**/*.tsbuildinfo
