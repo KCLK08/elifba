@@ -16,4 +16,24 @@ export const lesson3: ContentLesson = {
     'k1-l3-a3-ue2',
     'k1-l3-a3-ue3',
   ],
+  sections: [
+    {
+      id: 'l3-a1',
+      title: 'Fetha',
+      order: 1,
+      exerciseIds: ['k1-l3-a1-ue2', 'k1-l3-a1-ue3', 'k1-l3-a1-ue4'],
+    },
+    {
+      id: 'l3-a2',
+      title: 'Kesra',
+      order: 2,
+      exerciseIds: ['k1-l3-a2-ue2', 'k1-l3-a2-ue3', 'k1-l3-a2-ue4'],
+    },
+    {
+      id: 'l3-a3',
+      title: 'Damme',
+      order: 3,
+      exerciseIds: ['k1-l3-a3-ue2', 'k1-l3-a3-ue3'],
+    },
+  ],
 };

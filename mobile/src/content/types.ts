@@ -30,12 +30,21 @@ export interface ContentExercise {
   sourcePages?: number[];
 }
 
+export interface ContentLessonSection {
+  id: string;
+  title: string;
+  order: number;
+  exerciseIds: string[];
+}
+
 export interface ContentLesson {
   id: string;
   chapterId: string;
   title: string;
   order: number;
   exerciseIds: string[];
+  /** Optional sub-groups (e.g. Fetha / Kesra / Damme in Lektion 3). */
+  sections?: ContentLessonSection[];
   /** JPG pages covered by this lesson (TOC Teil 1). */
   sourcePages?: number[];
 }
