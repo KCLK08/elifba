@@ -5,6 +5,7 @@ import { ARABIC_FONT_FAMILY } from '@/constants/arabicFonts';
 import { colors, typography } from '@/constants/theme';
 
 import { mergeHighlightIndices } from './arabicDisplay';
+import { bridgeGrapheme } from './arabicJoining';
 import { normalizeArabicDisplay, segmentGraphemes } from './graphemes';
 
 interface ArabicLetterViewProps {
@@ -27,8 +28,10 @@ function colorForGrapheme(
  *
  * Important: Arabic cursive joining only works inside a single text run.
  * Nested <Text> per letter breaks connections (e.g. Dehnungs-Elif looks isolated).
- * We therefore render one Text whenever all graphemes share the same color,
- * and only split when per-grapheme highlighting is required.
+ * We therefore render one Text whenever all graphemes share the same color.
+ * When per-grapheme highlighting forces a split, each segment is bridged with
+ * ZERO WIDTH JOINER (see arabicJoining) so letters keep their contextual
+ * initial/medial/final shape and the group still reads as connected.
  */
 export function ArabicLetterView({ card }: ArabicLetterViewProps) {
   const arabic = normalizeArabicDisplay(card.arabic);
@@ -76,7 +79,7 @@ export function ArabicLetterView({ card }: ArabicLetterViewProps) {
                   color: colorsPerGrapheme[index],
                 }}
               >
-                {grapheme}
+                {bridgeGrapheme(graphemes, index)}
               </Text>
             ))}
           </Text>
