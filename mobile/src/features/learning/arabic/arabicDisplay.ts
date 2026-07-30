@@ -7,6 +7,62 @@ import type { HighlightMode } from '@/types';
 
 import { segmentGraphemes } from './graphemes';
 
+export interface PositionHighlightSegments {
+  before: string;
+  highlight: string;
+  after: string;
+}
+
+/**
+ * Split a word for Anfangs-/Mittel-/Endstellung exercises.
+ * Mirrors PWA `findTargetMatch` + `wrapOnce` — one highlighted run, rest connected.
+ */
+export function splitPositionHighlight(
+  word: string,
+  target: string | string[] | null | undefined,
+  mode: HighlightMode,
+): PositionHighlightSegments | null {
+  if (!target || mode === 'all') return null;
+
+  const targetList = Array.isArray(target) ? target : [target];
+  let best: { index: number; length: number } | null = null;
+
+  for (const t of targetList) {
+    if (!t) continue;
+    let startIndex = 0;
+    while (startIndex <= word.length) {
+      const idx = word.indexOf(t, startIndex);
+      if (idx === -1) break;
+      const end = idx + t.length;
+      const isMiddle = idx > 0 && end < word.length;
+      if (mode === 'initial') {
+        if (!best || idx < best.index) best = { index: idx, length: t.length };
+      } else if (mode === 'final') {
+        if (!best || idx > best.index) best = { index: idx, length: t.length };
+      } else if (isMiddle && (!best || idx < best.index)) {
+        best = { index: idx, length: t.length };
+      }
+      startIndex = idx + 1;
+    }
+  }
+
+  if (!best && mode === 'middle') {
+    for (const t of targetList) {
+      if (!t || best) continue;
+      const idx = word.indexOf(t);
+      if (idx !== -1) best = { index: idx, length: t.length };
+    }
+  }
+
+  if (!best) return null;
+
+  return {
+    before: word.slice(0, best.index),
+    highlight: word.slice(best.index, best.index + best.length),
+    after: word.slice(best.index + best.length),
+  };
+}
+
 export const arabicTextStyle = {
   writingDirection: 'rtl' as const,
   textAlign: 'center' as const,

@@ -4,8 +4,12 @@ import type { ContentCard } from '@/content';
 import { ARABIC_FONT_FAMILY } from '@/constants/arabicFonts';
 import { colors, typography } from '@/constants/theme';
 
-import { mergeHighlightIndices } from './arabicDisplay';
+import { mergeHighlightIndices, splitPositionHighlight } from './arabicDisplay';
 import { normalizeArabicDisplay, segmentGraphemes } from './graphemes';
+
+function isPositionFormMode(mode: ContentCard['highlightMode']): mode is 'initial' | 'middle' | 'final' {
+  return mode === 'initial' || mode === 'middle' || mode === 'final';
+}
 
 interface ArabicLetterViewProps {
   card: ContentCard;
@@ -25,10 +29,10 @@ function colorForGrapheme(
 /**
  * Large RTL Arabic display, centered in the card.
  *
- * Important: Arabic cursive joining only works inside a single text run.
- * Nested <Text> per grapheme breaks connections in words and letter groups.
- * Multi-grapheme cards (Buchstabengruppen, Lektion-2-Wörter, Tatweel-Formen)
- * always use one Text run; per-grapheme color is only used for isolated letters.
+ * Arabic cursive joining only works inside a single text run. Nested <Text> per
+ * grapheme breaks connections — a problem in Lektion 2 (Anfangs-/Mittel-/Endstellung).
+ * There we split into at most three runs (before | highlight | after), like the PWA
+ * `display: contents` highlight. Other exercises keep per-grapheme color when needed.
  */
 export function ArabicLetterView({ card }: ArabicLetterViewProps) {
   const arabic = normalizeArabicDisplay(card.arabic);
@@ -38,15 +42,17 @@ export function ArabicLetterView({ card }: ArabicLetterViewProps) {
   const highlight = mergeHighlightIndices(arabic, card.target, card.highlightMode);
   const lineHeight = Math.round(fontSize * 1.45);
 
+  const positionSegments =
+    isPositionFormMode(card.highlightMode)
+      ? splitPositionHighlight(arabic, card.target, card.highlightMode)
+      : null;
+
   const colorsPerGrapheme = graphemes.map((_, index) =>
     colorForGrapheme(index, highlight, card.tags),
   );
   const hasMixedColors = new Set(colorsPerGrapheme).size > 1;
-  const isConnectedText = graphemes.length > 1;
-  const needsSplit = !isConnectedText && hasMixedColors;
-  const displayColor = hasMixedColors
-    ? colors.ink
-    : (colorsPerGrapheme[0] ?? colors.ink);
+  const needsSplit = !positionSegments && hasMixedColors;
+  const displayColor = colorsPerGrapheme[0] ?? colors.ink;
 
   const baseTextStyle = {
     writingDirection: 'rtl' as const,
@@ -66,7 +72,28 @@ export function ArabicLetterView({ card }: ArabicLetterViewProps) {
         accessibilityRole="text"
         accessibilityLabel={`Arabisch: ${arabic}`}
       >
-        {needsSplit ? (
+        {positionSegments ? (
+          <Text
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.45}
+            style={{ ...baseTextStyle, color: colors.ink, alignSelf: 'stretch' }}
+          >
+            {positionSegments.before ? (
+              <Text style={{ ...baseTextStyle, color: colors.ink }}>
+                {positionSegments.before}
+              </Text>
+            ) : null}
+            <Text style={{ ...baseTextStyle, color: colors.warning }}>
+              {positionSegments.highlight}
+            </Text>
+            {positionSegments.after ? (
+              <Text style={{ ...baseTextStyle, color: colors.ink }}>
+                {positionSegments.after}
+              </Text>
+            ) : null}
+          </Text>
+        ) : needsSplit ? (
           <Text
             numberOfLines={1}
             adjustsFontSizeToFit
