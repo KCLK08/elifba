@@ -413,6 +413,7 @@ export const audioRegistry: Record<string, AudioSource> = {
   'k1-l3-a3-ue3-39': require('../../../assets/audio/k1-l3-a3-ue3-39.mp3'),
   'k1-l3-a3-ue3-40': require('../../../assets/audio/k1-l3-a3-ue3-40.mp3'),
   'k1-l3-a3-ue3-41': require('../../../assets/audio/k1-l3-a3-ue3-41.mp3'),
+  'k1-l3-a3-ue3-42': require('../../../assets/audio/k1-l3-a3-ue3-42.mp3'),
 };
 
 export function resolveAudioSource(audioId: string): AudioSource | null {
