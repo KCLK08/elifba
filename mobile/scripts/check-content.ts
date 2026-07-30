@@ -50,6 +50,31 @@ for (const lesson of lessons) {
       error(`Lesson ${lesson.id} references missing exercise ${exerciseId}`);
     }
   }
+
+  if (lesson.sections?.length) {
+    const sectionExerciseIds = new Set<string>();
+    for (const section of lesson.sections) {
+      for (const exerciseId of section.exerciseIds) {
+        if (!lesson.exerciseIds.includes(exerciseId)) {
+          error(
+            `Lesson ${lesson.id} section ${section.id} references exercise ${exerciseId} not in lesson.exerciseIds`,
+          );
+        }
+        if (!getExerciseById(exerciseId)) {
+          error(`Lesson ${lesson.id} section ${section.id} references missing exercise ${exerciseId}`);
+        }
+        if (sectionExerciseIds.has(exerciseId)) {
+          error(`Lesson ${lesson.id} section ${section.id} duplicates exercise ${exerciseId}`);
+        }
+        sectionExerciseIds.add(exerciseId);
+      }
+    }
+    for (const exerciseId of lesson.exerciseIds) {
+      if (!sectionExerciseIds.has(exerciseId)) {
+        error(`Lesson ${lesson.id} exercise ${exerciseId} is not assigned to any section`);
+      }
+    }
+  }
 }
 
 for (const exercise of exercises) {
