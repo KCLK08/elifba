@@ -5,6 +5,7 @@ import {
   type ContentExercise,
   type ContentLesson,
 } from '@/content';
+import { getExerciseProgressTotal } from '@/content/exerciseUtils';
 import { resolveLessonState } from '@/features/learning/path';
 
 export type ContinueTarget =
@@ -45,13 +46,16 @@ export function resolveContinueLearning(input: {
   if (sessionExerciseId) {
     const sessionEx = getExerciseById(sessionExerciseId);
     if (sessionEx) {
-      const p = getExercisePercent(profileId, sessionEx.id, sessionEx.cards.length);
+      const p = getExercisePercent(profileId, sessionEx.id, getExerciseProgressTotal(sessionEx));
       if (p < 100) {
         const lesson = getLessonById(sessionEx.lessonId);
         if (lesson) {
           const totals = lesson.exerciseIds.map((id) => ({
             exerciseId: id,
-            total: getExerciseById(id)?.cards.length ?? 0,
+            total: (() => {
+              const ex = getExerciseById(id);
+              return ex ? getExerciseProgressTotal(ex) : 0;
+            })(),
           }));
           return {
             kind: 'exercise',
@@ -67,10 +71,13 @@ export function resolveContinueLearning(input: {
   // 2–3. Next open exercise in unlocked lessons
   const chapterLessons = getLessonsForChapter('elifba');
   const percents = chapterLessons.map((lesson) => {
-    const totals = lesson.exerciseIds.map((id) => ({
-      exerciseId: id,
-      total: getExerciseById(id)?.cards.length ?? 0,
-    }));
+    const totals = lesson.exerciseIds.map((id) => {
+      const ex = getExerciseById(id);
+      return {
+        exerciseId: id,
+        total: ex ? getExerciseProgressTotal(ex) : 0,
+      };
+    });
     return getLessonPercent(profileId, lesson.id, totals);
   });
 
@@ -83,7 +90,7 @@ export function resolveContinueLearning(input: {
     for (const exId of lesson.exerciseIds) {
       const ex = getExerciseById(exId);
       if (!ex) continue;
-      if (getExercisePercent(profileId, ex.id, ex.cards.length) < 100) {
+      if (getExercisePercent(profileId, ex.id, getExerciseProgressTotal(ex)) < 100) {
         return {
           kind: 'exercise',
           exercise: ex,

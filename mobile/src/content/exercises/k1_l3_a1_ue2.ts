@@ -4,10 +4,10 @@ import type { ContentExercise } from '../types';
 export const k1_l3_a1_ue2: ContentExercise = {
   id: "k1-l3-a1-ue2",
   lessonId: "lesson-3",
-  title: "Fetha – Einzelne",
+  title: "Fetha – Einzelnd",
   type: 'trainer',
   mode: 'sequence',
-  order: 1,
+  order: 2,
   audioBase: "K1.L3.A1.UE1.Audio",
   cards: [
   {

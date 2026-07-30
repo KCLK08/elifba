@@ -1,6 +1,7 @@
 import { Text, View } from 'react-native';
 
 import { getExerciseById, getLessonById, lessons } from '@/content';
+import { getExerciseProgressTotal } from '@/content/exerciseUtils';
 import { Card, ProgressBar, ScreenContainer } from '@/components/ui';
 import { arabicTextStyle } from '@/features/learning/arabic/arabicDisplay';
 import { getLessonVisual } from '@/features/learning/path';
@@ -20,10 +21,13 @@ export default function ProgressScreen() {
   void progressEpoch;
 
   const completedLessons = lessons.filter((lesson) => {
-    const totals = lesson.exerciseIds.map((id) => ({
-      exerciseId: id,
-      total: getExerciseById(id)?.cards.length ?? 0,
-    }));
+    const totals = lesson.exerciseIds.map((id) => {
+      const ex = getExerciseById(id);
+      return {
+        exerciseId: id,
+        total: ex ? getExerciseProgressTotal(ex) : 0,
+      };
+    });
     return profileId ? getLessonPercent(profileId, lesson.id, totals) >= 100 : false;
   }).length;
 
@@ -63,10 +67,13 @@ export default function ProgressScreen() {
       ) : null}
 
       {lessons.map((lesson) => {
-        const totals = lesson.exerciseIds.map((id) => ({
-          exerciseId: id,
-          total: getExerciseById(id)?.cards.length ?? 0,
-        }));
+        const totals = lesson.exerciseIds.map((id) => {
+          const ex = getExerciseById(id);
+          return {
+            exerciseId: id,
+            total: ex ? getExerciseProgressTotal(ex) : 0,
+          };
+        });
         const percent = profileId ? getLessonPercent(profileId, lesson.id, totals) : 0;
         const done = percent >= 100;
         const visual = getLessonVisual(lesson.order);
@@ -91,7 +98,9 @@ export default function ProgressScreen() {
             {lesson.exerciseIds.map((exId) => {
               const ex = getExerciseById(exId);
               if (!ex) return null;
-              const p = profileId ? getExercisePercent(profileId, exId, ex.cards.length) : 0;
+              const p = profileId
+                ? getExercisePercent(profileId, exId, getExerciseProgressTotal(ex))
+                : 0;
               return (
                 <View key={exId} className="mt-3 flex-row items-center justify-between">
                   <Text className="flex-1 pr-2 text-base text-ink">{ex.title}</Text>

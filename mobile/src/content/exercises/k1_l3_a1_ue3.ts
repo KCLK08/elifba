@@ -7,7 +7,7 @@ export const k1_l3_a1_ue3: ContentExercise = {
   title: "Fetha – Gruppen",
   type: 'trainer',
   mode: 'sequence',
-  order: 2,
+  order: 3,
   audioBase: "K1.L3.A1.UE2.Audio",
   cards: [
   {

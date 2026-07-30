@@ -3,6 +3,8 @@ import { Stack, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 
 import { getExerciseById } from '@/content';
+import { getExerciseProgressTotal, isTrainerExercise } from '@/content/exerciseUtils';
+import { ExplanationScreen } from '@/features/learning/explanation';
 import { ScreenContainer } from '@/components/ui';
 import {
   ExerciseCompletedGate,
@@ -35,9 +37,17 @@ export default function ExerciseRoute() {
     );
   }
 
-  const percent = profileId
-    ? getExercisePercent(profileId, exercise.id, exercise.cards.length)
-    : 0;
+  if (exercise.type === 'explanation') {
+    return (
+      <>
+        <Stack.Screen options={{ title: exercise.title }} />
+        <ExplanationScreen exercise={exercise} />
+      </>
+    );
+  }
+
+  const progressTotal = getExerciseProgressTotal(exercise);
+  const percent = profileId ? getExercisePercent(profileId, exercise.id, progressTotal) : 0;
   const isMasteryComplete = percent >= 100;
   const showGate = isMasteryComplete && !practiceStarted;
 

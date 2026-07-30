@@ -7,7 +7,7 @@ export const k1_l3_a3_ue3: ContentExercise = {
   title: "Damme – Gruppen",
   type: 'trainer',
   mode: 'sequence',
-  order: 8,
+  order: 11,
   audioBase: '',
   sourcePages: [23],
   cards: [

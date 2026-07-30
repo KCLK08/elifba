@@ -7,7 +7,7 @@ export const k1_l3_a1_ue4: ContentExercise = {
   title: "Fetha – Abschluss",
   type: 'trainer',
   mode: 'sequence',
-  order: 3,
+  order: 4,
   audioBase: "K1.L3.A1.UE3.Audio",
   cards: [
   {
