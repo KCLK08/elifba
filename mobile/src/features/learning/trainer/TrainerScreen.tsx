@@ -4,8 +4,9 @@ import { Stack, useNavigation, useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
-import type { ContentExercise } from '@/content';
+import type { ContentTrainerExercise } from '@/content';
 import { getExerciseById, getLessonById } from '@/content';
+import { getExerciseProgressTotal } from '@/content/exerciseUtils';
 import { Button, IconButton, Modal, ScreenContainer } from '@/components/ui';
 import { starsEarnedFromProgress } from '@/components/ui/starMilestones';
 import { StarEarnBurst } from '@/features/rewards/StarEarnBurst';
@@ -23,7 +24,7 @@ import { TrainerSettingsModal } from './TrainerSettingsModal';
 import type { TrainerAnswer } from './scoring';
 
 interface TrainerScreenProps {
-  exercise: ContentExercise;
+  exercise: ContentTrainerExercise;
   practice?: boolean;
   visualReset?: boolean;
   onPracticeAgain?: () => void;
@@ -175,10 +176,13 @@ export function TrainerScreen({
       await markExerciseCompleted(profileId, exercise.id);
       const lesson = getLessonById(exercise.lessonId);
       if (lesson) {
-        const totals = lesson.exerciseIds.map((id) => ({
-          exerciseId: id,
-          total: getExerciseById(id)?.cards.length ?? 0,
-        }));
+        const totals = lesson.exerciseIds.map((id) => {
+          const ex = getExerciseById(id);
+          return {
+            exerciseId: id,
+            total: ex ? getExerciseProgressTotal(ex) : 0,
+          };
+        });
         const lessonPercent = getLessonPercent(profileId, lesson.id, totals);
         if (lessonPercent >= 100) {
           await awardLesson(profileId, lesson.id);

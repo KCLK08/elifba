@@ -87,6 +87,13 @@ for (const exercise of exercises) {
     error(`Exercise ${exercise.id} has unknown lessonId ${exercise.lessonId}`);
   }
 
+  if (exercise.type === 'explanation') {
+    if (!exercise.explanation?.trim()) {
+      error(`Explanation exercise ${exercise.id} has empty explanation text`);
+    }
+    continue;
+  }
+
   if (!exercise.cards.length) {
     error(`Exercise ${exercise.id} has no cards`);
   }

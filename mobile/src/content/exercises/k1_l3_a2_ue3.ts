@@ -7,7 +7,7 @@ export const k1_l3_a2_ue3: ContentExercise = {
   title: "Kesra – Gruppen",
   type: 'trainer',
   mode: 'sequence',
-  order: 5,
+  order: 7,
   audioBase: "K1.L3.A2.UE2.Audio",
   cards: [
   {

@@ -21,7 +21,20 @@ import { CONTENT_VERSION } from './version';
 
 export { CONTENT_VERSION };
 export { exercises, getExerciseById, getExercisesForLesson };
-export type { ContentCard, ContentExercise, ContentLesson, ContentLessonSection, ContentChapter } from './types';
+export {
+  explanationCardId,
+  getExerciseProgressTotal,
+  isTrainerExercise,
+} from './exerciseUtils';
+export type {
+  ContentCard,
+  ContentExercise,
+  ContentExplanationExercise,
+  ContentTrainerExercise,
+  ContentLesson,
+  ContentLessonSection,
+  ContentChapter,
+} from './types';
 
 export const chapters: ContentChapter[] = [elifbaChapter];
 

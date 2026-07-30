@@ -14,21 +14,31 @@ export interface ContentCard {
   tags?: string[];
 }
 
-export interface ContentExercise {
+interface ContentExerciseBase {
   id: string;
   lessonId: string;
   title: string;
+  order: number;
+  /** JPG pages that contributed cards to this exercise. */
+  sourcePages?: number[];
+}
+
+export interface ContentTrainerExercise extends ContentExerciseBase {
   type: 'trainer';
   cards: ContentCard[];
   /** Empty string when audio is not yet wired. */
   audioBase: string;
   mode: TrainerMode;
-  order: number;
   /** Optional German explanation from the JPG source. */
   explanation?: string;
-  /** JPG pages that contributed cards to this exercise. */
-  sourcePages?: number[];
 }
+
+export interface ContentExplanationExercise extends ContentExerciseBase {
+  type: 'explanation';
+  explanation: string;
+}
+
+export type ContentExercise = ContentTrainerExercise | ContentExplanationExercise;
 
 export interface ContentLessonSection {
   id: string;

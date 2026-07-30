@@ -4,13 +4,12 @@ import type { ContentExercise } from '../../types';
 export const k1_l3_a3_ue2: ContentExercise = {
   id: "k1-l3-a3-ue2",
   lessonId: "lesson-3",
-  title: "Damme – Einzelne",
+  title: "Damme – Einzelnd",
   type: 'trainer',
   mode: 'sequence',
-  order: 7,
+  order: 10,
   audioBase: '',
   sourcePages: [22],
-  explanation: "Das Damme ist ein kleines و (wau)-Zeichen über dem Buchstaben. Es vokalisiert die dumpfen Buchstaben mit einem „u“ und die hellen Buchstaben mit einem Laut zwischen „u“ und „ü“.",
   cards: [
   {
     id: "k1-l3-a3-ue2-card-1",

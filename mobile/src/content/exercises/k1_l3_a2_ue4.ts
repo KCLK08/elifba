@@ -7,7 +7,7 @@ export const k1_l3_a2_ue4: ContentExercise = {
   title: "Kesra – Abschluss",
   type: 'trainer',
   mode: 'sequence',
-  order: 6,
+  order: 8,
   audioBase: "K1.L3.A2.UE3.Audio",
   cards: [
   {

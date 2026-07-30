@@ -2,6 +2,7 @@ import { Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { getExerciseById, getLessonsForChapter } from '@/content';
+import { getExerciseProgressTotal } from '@/content/exerciseUtils';
 import { ScreenContainer } from '@/components/ui';
 import { LessonNode, resolveLessonState } from '@/features/learning/path';
 import { useProfileStore } from '@/store/profileStore';
@@ -18,7 +19,10 @@ export default function LearnScreen() {
   const percents = chapterLessons.map((lesson) => {
     const totals = lesson.exerciseIds.map((id) => ({
       exerciseId: id,
-      total: getExerciseById(id)?.cards.length ?? 0,
+      total: (() => {
+        const ex = getExerciseById(id);
+        return ex ? getExerciseProgressTotal(ex) : 0;
+      })(),
     }));
     // Depend on byExercise / progressEpoch so reset refreshes rings
     void byExercise;

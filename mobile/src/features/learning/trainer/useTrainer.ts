@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AppState } from 'react-native';
 
-import type { ContentCard, ContentExercise } from '@/content';
+import type { ContentCard, ContentTrainerExercise } from '@/content';
 import { playAudio, resolveAudioSource, stopAudio } from '@/services/audio';
 import { log } from '@/services/logger';
 import {
@@ -33,7 +33,7 @@ export interface UseTrainerOptions {
 }
 
 export interface UseTrainerResult {
-  exercise: ContentExercise;
+  exercise: ContentTrainerExercise;
   currentCard: ContentCard | null;
   queue: number[];
   queueLength: number;
@@ -57,7 +57,7 @@ export interface UseTrainerResult {
   listen: () => Promise<'ok' | 'muted' | 'missing' | 'error'>;
 }
 
-function buildFreshStats(exercise: ContentExercise): Record<string, CardStat> {
+function buildFreshStats(exercise: ContentTrainerExercise): Record<string, CardStat> {
   const initial: Record<string, CardStat> = {};
   for (const card of exercise.cards) {
     initial[card.id] = createInitialStat();
@@ -66,7 +66,7 @@ function buildFreshStats(exercise: ContentExercise): Record<string, CardStat> {
 }
 
 function buildPersistedStats(
-  exercise: ContentExercise,
+  exercise: ContentTrainerExercise,
   persisted: ReturnType<ReturnType<typeof useProgressStore.getState>['loadExerciseProgress']>,
 ): Record<string, CardStat> {
   const initial: Record<string, CardStat> = {};
@@ -77,7 +77,7 @@ function buildPersistedStats(
 }
 
 function countMasteryLearned(
-  exercise: ContentExercise,
+  exercise: ContentTrainerExercise,
   persisted: ReturnType<ReturnType<typeof useProgressStore.getState>['loadExerciseProgress']>,
 ): number {
   if (!persisted) return 0;
@@ -85,7 +85,7 @@ function countMasteryLearned(
 }
 
 export function useTrainer(
-  exercise: ContentExercise,
+  exercise: ContentTrainerExercise,
   options: UseTrainerOptions = {},
 ): UseTrainerResult {
   const practice = options.practice === true;

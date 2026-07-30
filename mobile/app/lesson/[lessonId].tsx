@@ -4,6 +4,7 @@ import { Stack } from 'expo-router';
 
 import { getLessonById, getLessonExerciseGroups } from '@/content';
 import type { ContentExercise } from '@/content';
+import { getExerciseProgressTotal } from '@/content/exerciseUtils';
 import { Card, ScreenContainer, StarProgressBar } from '@/components/ui';
 import { useProfileStore } from '@/store/profileStore';
 import { useProgressStore } from '@/store/progressStore';
@@ -17,13 +18,19 @@ function ExerciseCard({
   percent: number;
   onPress: () => void;
 }) {
+  const isExplanation = exercise.type === 'explanation';
+
   return (
     <Pressable accessibilityRole="button" onPress={onPress}>
       <Card className="mb-4">
-        <Text className="mb-1 text-sm font-semibold text-primary">Trainer</Text>
+        <Text className="mb-1 text-sm font-semibold text-primary">
+          {isExplanation ? 'Erklärung' : 'Trainer'}
+        </Text>
         <Text className="mb-3 text-lg font-bold text-ink">{exercise.title}</Text>
         <Text className="mb-2 text-sm text-ink-muted">
-          {exercise.cards.length} Karten
+          {isExplanation
+            ? 'Theorie'
+            : `${exercise.cards.length} Karten`}
           {percent >= 100 ? ' · Geschafft' : ''}
         </Text>
         <StarProgressBar progress={percent} />
@@ -69,7 +76,11 @@ export default function LessonScreen() {
             <Text className="mb-3 text-xl font-bold text-ink">{group.sectionTitle}</Text>
           ) : null}
           {group.exercises.map((exercise) => {
-            const percent = getExercisePercent(profileId, exercise.id, exercise.cards.length);
+            const percent = getExercisePercent(
+              profileId,
+              exercise.id,
+              getExerciseProgressTotal(exercise),
+            );
             return (
               <ExerciseCard
                 key={exercise.id}
