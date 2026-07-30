@@ -26,9 +26,9 @@ function colorForGrapheme(
  * Large RTL Arabic display, centered in the card.
  *
  * Important: Arabic cursive joining only works inside a single text run.
- * Nested <Text> per letter breaks connections (e.g. Dehnungs-Elif looks isolated).
- * We therefore render one Text whenever all graphemes share the same color,
- * and only split when per-grapheme highlighting is required.
+ * Nested <Text> per grapheme breaks connections in words and letter groups.
+ * Multi-grapheme cards (Buchstabengruppen, Lektion-2-Wörter, Tatweel-Formen)
+ * always use one Text run; per-grapheme color is only used for isolated letters.
  */
 export function ArabicLetterView({ card }: ArabicLetterViewProps) {
   const arabic = normalizeArabicDisplay(card.arabic);
@@ -41,7 +41,12 @@ export function ArabicLetterView({ card }: ArabicLetterViewProps) {
   const colorsPerGrapheme = graphemes.map((_, index) =>
     colorForGrapheme(index, highlight, card.tags),
   );
-  const needsSplit = new Set(colorsPerGrapheme).size > 1;
+  const hasMixedColors = new Set(colorsPerGrapheme).size > 1;
+  const isConnectedText = graphemes.length > 1;
+  const needsSplit = !isConnectedText && hasMixedColors;
+  const displayColor = hasMixedColors
+    ? colors.ink
+    : (colorsPerGrapheme[0] ?? colors.ink);
 
   const baseTextStyle = {
     writingDirection: 'rtl' as const,
@@ -87,7 +92,7 @@ export function ArabicLetterView({ card }: ArabicLetterViewProps) {
             minimumFontScale={0.45}
             style={{
               ...baseTextStyle,
-              color: colorsPerGrapheme[0] ?? colors.ink,
+              color: displayColor,
               alignSelf: 'stretch',
             }}
           >
