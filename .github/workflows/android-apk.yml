@@ -12,16 +12,15 @@ permissions:
   contents: write
 
 concurrency:
-  group: android-apk-${{ github.ref }}
+  group: android-apk-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   build-apk:
     name: Build & release APK
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: mobile
+    timeout-minutes: 60
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,56 +32,75 @@ jobs:
           cache: npm
           cache-dependency-path: mobile/package-lock.json
 
-      - name: Setup EAS
-        uses: expo/expo-github-action@v8
+      - name: Setup Java
+        uses: actions/setup-java@v4
         with:
-          eas-version: latest
-          token: ${{ secrets.EXPO_TOKEN }}
+          distribution: temurin
+          java-version: 17
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
 
       - name: Install dependencies
+        working-directory: mobile
         run: npm ci
 
       - name: Typecheck
+        working-directory: mobile
         run: npm run typecheck
 
-      - name: Build Android APK (EAS)
-        id: eas
+      - name: Generate native Android project
+        working-directory: mobile
+        env:
+          CI: '1'
+        run: npx expo prebuild --platform android --non-interactive
+
+      - name: Build standalone release APK
+        working-directory: mobile/android
+        run: |
+          chmod +x gradlew
+          # Release embeds the JS bundle via export:embed; debug expects Metro on :8081.
+          ./gradlew assembleRelease --no-daemon
+
+      - name: Prepare APK file
+        id: apk
+        working-directory: mobile
         run: |
           set -euo pipefail
-          eas build \
-            --platform android \
-            --profile apk \
-            --non-interactive \
-            --wait \
-            --json > /tmp/eas-build.json
+          VERSION="$(node -p "require('./package.json').version")"
+          SHORT_SHA="${GITHUB_SHA::7}"
+          SRC="$GITHUB_WORKSPACE/mobile/android/app/build/outputs/apk/release/app-release.apk"
+          OUT_DIR="$GITHUB_WORKSPACE/mobile/dist"
+          APK_NAME="elifba-kids-${VERSION}-${SHORT_SHA}.apk"
+          APK_ABS="${OUT_DIR}/${APK_NAME}"
 
-          BUILD_ID=$(node -e "const j=require('/tmp/eas-build.json'); const b=Array.isArray(j)?j[0]:j; if(!b?.id) process.exit(1); process.stdout.write(b.id)")
-          ARTIFACT_URL=$(node -e "const j=require('/tmp/eas-build.json'); const b=Array.isArray(j)?j[0]:j; process.stdout.write(b?.artifacts?.buildUrl || b?.artifacts?.applicationArchiveUrl || '')")
+          test -f "$SRC"
+          mkdir -p "$OUT_DIR"
+          cp "$SRC" "$APK_ABS"
 
-          echo "build_id=$BUILD_ID" >> "$GITHUB_OUTPUT"
-          echo "artifact_url=$ARTIFACT_URL" >> "$GITHUB_OUTPUT"
-          echo "EAS build id: $BUILD_ID"
+          file "$APK_ABS"
+          [[ "$APK_NAME" == *.apk ]]
+          ls -lh "$APK_ABS"
 
-      - name: Download APK
-        run: |
-          set -euo pipefail
-          mkdir -p dist
-          if [ -n "${{ steps.eas.outputs.artifact_url }}" ]; then
-            curl -L --fail --retry 3 -o dist/elifba-kids.apk "${{ steps.eas.outputs.artifact_url }}"
-          else
-            eas build:download \
-              --id "${{ steps.eas.outputs.build_id }}" \
-              --platform android \
-              --output dist/elifba-kids.apk \
-              --non-interactive
+          # Standalone APK must ship an embedded JS bundle (not Metro dev client).
+          if ! unzip -l "$APK_ABS" | grep -qE 'assets/.*(index\.android\.bundle|\.hbc)'; then
+            echo "ERROR: No embedded JS bundle found in APK assets."
+            unzip -l "$APK_ABS" | grep -E 'assets/' || true
+            exit 1
           fi
-          ls -lh dist/elifba-kids.apk
+
+          {
+            echo "version=${VERSION}"
+            echo "short_sha=${SHORT_SHA}"
+            echo "apk_name=${APK_NAME}"
+            echo "apk_abs=${APK_ABS}"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: elifba-kids-apk
-          path: mobile/dist/elifba-kids.apk
+          path: ${{ steps.apk.outputs.apk_abs }}
           if-no-files-found: error
           retention-days: 30
 
@@ -92,9 +110,10 @@ jobs:
           tag_name: apk-${{ github.run_number }}-${{ github.sha }}
           name: Elifba Kids APK (${{ github.run_number }})
           body: |
-            Automatischer APK-Build von `main`.
+            Automatischer APK-Build von `main` (lokal in GitHub Actions).
 
-            - Commit: ${{ github.sha }}
-            - EAS Build: ${{ steps.eas.outputs.build_id }}
-          files: mobile/dist/elifba-kids.apk
+            - Version: `${{ steps.apk.outputs.version }}`
+            - Commit: `${{ steps.apk.outputs.short_sha }}`
+            - Workflow: [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          files: ${{ steps.apk.outputs.apk_abs }}
           fail_on_unmatched_files: true
