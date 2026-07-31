@@ -26,6 +26,16 @@ export default function ProfileScreen() {
 
       <RewardsStrip stars={rewards.stars} streak={rewards.streak} />
 
+      {profile ? (
+        <Button
+          label="Profil bearbeiten"
+          variant="ghost"
+          size="md"
+          className="mb-4"
+          onPress={() => router.push(`/profile/${profile.id}`)}
+        />
+      ) : null}
+
       <ProfileSwitcher onAddProfile={() => router.push('/onboarding')} />
 
       <Card className="mb-4">

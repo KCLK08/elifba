@@ -2,6 +2,8 @@ import { create } from 'zustand';
 
 import { getItem, setItem, storageKeys } from '@/services/storage';
 import { resolveAvatarId } from '@/constants/avatars';
+import { useProgressStore } from '@/store/progressStore';
+import { useRewardsStore } from '@/store/rewardsStore';
 import type { AvatarId, Profile } from '@/types';
 
 interface ProfileState {
@@ -14,7 +16,13 @@ interface ProfileState {
   setActiveProfile: (id: string) => Promise<void>;
   createProfile: (input: { name: string; avatar: AvatarId }) => Promise<Profile>;
   upsertProfile: (profile: Profile) => Promise<void>;
+  updateProfile: (
+    id: string,
+    patch: Partial<Pick<Profile, 'name' | 'avatar'>>,
+  ) => Promise<void>;
   updateActiveProfile: (patch: Partial<Pick<Profile, 'name' | 'avatar'>>) => Promise<void>;
+  /** Returns whether any profiles remain after deletion. */
+  deleteProfile: (id: string) => Promise<boolean>;
 }
 
 async function persist(profiles: Profile[], activeProfileId: string | null) {
@@ -82,13 +90,41 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
     await persist(next, nextActive);
   },
 
-  updateActiveProfile: async (patch) => {
+  updateProfile: async (id, patch) => {
     const { profiles, activeProfileId } = get();
-    if (!activeProfileId) return;
+    if (!profiles.some((p) => p.id === id)) return;
     const next = profiles.map((p) =>
-      p.id === activeProfileId ? { ...p, ...patch } : p,
+      p.id === id
+        ? {
+            ...p,
+            ...patch,
+            ...(patch.name != null ? { name: patch.name.trim() || 'Freund' } : {}),
+          }
+        : p,
     );
     set({ profiles: next });
     await persist(next, activeProfileId);
+  },
+
+  updateActiveProfile: async (patch) => {
+    const { activeProfileId } = get();
+    if (!activeProfileId) return;
+    await get().updateProfile(activeProfileId, patch);
+  },
+
+  deleteProfile: async (id) => {
+    const { profiles, activeProfileId } = get();
+    if (!profiles.some((p) => p.id === id)) return true;
+
+    const nextProfiles = profiles.filter((p) => p.id !== id);
+    const nextActiveId =
+      activeProfileId === id ? (nextProfiles[0]?.id ?? null) : activeProfileId;
+
+    set({ profiles: nextProfiles, activeProfileId: nextActiveId });
+    await persist(nextProfiles, nextActiveId);
+    await useProgressStore.getState().removeProfileProgress(id);
+    await useRewardsStore.getState().removeProfileRewards(id);
+
+    return nextProfiles.length > 0;
   },
 }));

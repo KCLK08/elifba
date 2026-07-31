@@ -52,6 +52,7 @@ export default function RootLayout() {
             options={{ title: 'Übung', headerBackTitle: 'Zurück' }}
           />
           <Stack.Screen name="settings" options={{ title: 'Einstellungen' }} />
+          <Stack.Screen name="profile/[profileId]" options={{ title: 'Profil bearbeiten' }} />
         </Stack>
       </GestureHandlerRootView>
     </SafeAreaProvider>
