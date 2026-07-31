@@ -50,6 +50,7 @@ interface ProgressState {
   ) => number;
   /** Clears all mastery progress + resume session (profiles stay). */
   resetLocalProgress: () => Promise<void>;
+  removeProfileProgress: (profileId: string) => Promise<void>;
 }
 
 function exerciseKey(profileId: string, exerciseId: string): string {
@@ -143,5 +144,24 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     await removeItem(storageKeys.progress);
     await removeItem(storageKeys.session);
     await setItem(storageKeys.progress, {});
+  },
+
+  removeProfileProgress: async (profileId) => {
+    const prefix = `${profileId}::`;
+    const byExercise = Object.fromEntries(
+      Object.entries(get().byExercise).filter(([key]) => !key.startsWith(prefix)),
+    );
+    const session = get().session?.profileId === profileId ? null : get().session;
+    set({
+      byExercise,
+      session,
+      progressEpoch: get().progressEpoch + 1,
+    });
+    await setItem(storageKeys.progress, byExercise);
+    if (session) {
+      await setItem(storageKeys.session, session);
+    } else {
+      await removeItem(storageKeys.session);
+    }
   },
 }));

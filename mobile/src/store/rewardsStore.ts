@@ -62,6 +62,7 @@ interface RewardsState {
     kind?: 'summary' | 'encourage';
   }) => void;
   resetAllRewards: () => Promise<void>;
+  removeProfileRewards: (profileId: string) => Promise<void>;
 }
 
 function todayKey(): string {
@@ -132,6 +133,13 @@ export const useRewardsStore = create<RewardsState>((set, get) => ({
   resetAllRewards: async () => {
     set({ byProfile: {}, celebration: null });
     await setItem(storageKeys.rewards, {});
+  },
+
+  removeProfileRewards: async (profileId) => {
+    const byProfile = { ...get().byProfile };
+    delete byProfile[profileId];
+    set({ byProfile });
+    await setItem(storageKeys.rewards, byProfile);
   },
 
   touchStreak: async (profileId) => {

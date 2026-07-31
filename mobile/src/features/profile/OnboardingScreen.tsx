@@ -1,11 +1,10 @@
 import { useState } from 'react';
-import { Pressable, Text, TextInput, View } from 'react-native';
+import { Text } from 'react-native';
 import { useRouter } from 'expo-router';
-import * as Haptics from 'expo-haptics';
 
-import { Avatar, Button, Card, ScreenContainer } from '@/components/ui';
-import { AVATAR_EMOJI, AVATAR_IDS } from '@/constants/avatars';
+import { Button, Card, ScreenContainer } from '@/components/ui';
 import { arabicTextStyle } from '@/features/learning/arabic/arabicDisplay';
+import { ProfileForm } from '@/features/profile/ProfileForm';
 import { useProfileStore } from '@/store/profileStore';
 import type { AvatarId } from '@/types';
 
@@ -16,15 +15,13 @@ export function OnboardingScreen() {
   const createProfile = useProfileStore((s) => s.createProfile);
   const profilesCount = useProfileStore((s) => s.profiles.length);
   const [step, setStep] = useState<Step>(profilesCount > 0 ? 'profile' : 'welcome');
-  const [name, setName] = useState('');
-  const [avatar, setAvatar] = useState<AvatarId>('fox');
   const [saving, setSaving] = useState(false);
 
-  const finish = async () => {
+  const finish = async (values: { name: string; avatar: AvatarId }) => {
     if (saving) return;
     setSaving(true);
     try {
-      await createProfile({ name: name.trim() || 'Freund', avatar });
+      await createProfile(values);
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       router.replace('/(tabs)/home');
     } finally {
@@ -84,54 +81,10 @@ export function OnboardingScreen() {
         Wähle einen Namen und einen Freund. Du kannst später weitere Profile anlegen.
       </Text>
 
-      <View className="mb-8 items-center">
-        <Avatar avatar={avatar} size="lg" />
-      </View>
-
-      <Card className="mb-5">
-        <Text className="mb-2 text-base font-semibold text-ink">Dein Name</Text>
-        <TextInput
-          value={name}
-          onChangeText={setName}
-          placeholder="z. B. Amina"
-          placeholderTextColor="#99B8B4"
-          maxLength={20}
-          className="min-h-[56px] rounded-2xl bg-primary-soft px-4 text-xl font-bold text-ink"
-          autoCapitalize="words"
-          returnKeyType="done"
-        />
-      </Card>
-
-      <Card className="mb-8">
-        <Text className="mb-3 text-base font-semibold text-ink">Dein Tier-Freund</Text>
-        <View className="flex-row flex-wrap justify-start gap-2">
-          {AVATAR_IDS.map((id) => {
-            const selected = id === avatar;
-            return (
-              <Pressable
-                key={id}
-                accessibilityRole="button"
-                accessibilityState={{ selected }}
-                accessibilityLabel={`Avatar ${id}`}
-                onPress={() => {
-                  setAvatar(id);
-                  void Haptics.selectionAsync();
-                }}
-                className={`h-16 w-[22%] items-center justify-center rounded-2xl ${
-                  selected ? 'bg-secondary' : 'bg-primary-soft'
-                }`}
-              >
-                <Text className="text-3xl">{AVATAR_EMOJI[id]}</Text>
-              </Pressable>
-            );
-          })}
-        </View>
-      </Card>
-
-      <Button
-        label={profilesCount > 0 ? 'Kind hinzufügen' : 'Los geht’s – erste Übung!'}
-        onPress={() => void finish()}
+      <ProfileForm
+        submitLabel={profilesCount > 0 ? 'Kind hinzufügen' : 'Los geht’s – erste Übung!'}
         disabled={saving}
+        onSubmit={finish}
       />
     </ScreenContainer>
   );
