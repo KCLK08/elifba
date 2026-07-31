@@ -77,6 +77,12 @@ for (const lesson of lessons) {
   }
 }
 
+const TANWIN = /[\u064B\u064C\u064D]/;
+const DAMMA = /\u064F/g;
+
+/** Lesson-3 Damme group exercises: one damma per word, no tanwin. */
+const DAMME_GRUPPEN_IDS = new Set(['k1-l3-a3-ue3']);
+
 for (const exercise of exercises) {
   if (exerciseIds.has(exercise.id)) {
     error(`Duplicate exercise id: ${exercise.id}`);
@@ -107,6 +113,19 @@ for (const exercise of exercises) {
     if (!card.arabic?.trim()) {
       error(`Card ${card.id} has empty arabic text`);
     }
+
+    if (DAMME_GRUPPEN_IDS.has(exercise.id)) {
+      const dammaCount = (card.arabic.match(DAMMA) ?? []).length;
+      if (dammaCount !== 1) {
+        error(
+          `Card ${card.id} in ${exercise.id} must have exactly one damma (ُ), found ${dammaCount}: ${card.arabic}`,
+        );
+      }
+      if (TANWIN.test(card.arabic)) {
+        error(`Card ${card.id} in ${exercise.id} must not contain tanwin: ${card.arabic}`);
+      }
+    }
+
     if (card.audioId == null || card.audioId === '') {
       warn(`Card ${card.id} has no audio yet (audioId=null)`);
       continue;
