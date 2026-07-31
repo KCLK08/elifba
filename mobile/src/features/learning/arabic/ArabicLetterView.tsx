@@ -6,6 +6,7 @@ import { colors, typography } from '@/constants/theme';
 
 import { mergeHighlightIndices, splitPositionHighlight } from './arabicDisplay';
 import { normalizeArabicDisplay, segmentGraphemes } from './graphemes';
+import { PositionHighlightText } from './PositionHighlightText';
 
 function isPositionFormMode(mode: ContentCard['highlightMode']): mode is 'initial' | 'middle' | 'final' {
   return mode === 'initial' || mode === 'middle' || mode === 'final';
@@ -31,8 +32,8 @@ function colorForGrapheme(
  *
  * Arabic cursive joining only works inside a single text run. Nested <Text> per
  * grapheme breaks connections — a problem in Lektion 2 (Anfangs-/Mittel-/Endstellung).
- * There we split into at most three runs (before | highlight | after), like the PWA
- * `display: contents` highlight. Other exercises keep per-grapheme color when needed.
+ * Position exercises use PositionHighlightText (Skia Paragraph on native, display:contents
+ * on web) so the full word is shaped once while the target letter stays highlighted.
  */
 export function ArabicLetterView({ card }: ArabicLetterViewProps) {
   const arabic = normalizeArabicDisplay(card.arabic);
@@ -73,26 +74,10 @@ export function ArabicLetterView({ card }: ArabicLetterViewProps) {
         accessibilityLabel={`Arabisch: ${arabic}`}
       >
         {positionSegments ? (
-          <Text
-            numberOfLines={1}
-            adjustsFontSizeToFit
-            minimumFontScale={0.45}
-            style={{ ...baseTextStyle, color: colors.ink, alignSelf: 'stretch' }}
-          >
-            {positionSegments.before ? (
-              <Text style={{ ...baseTextStyle, color: colors.ink }}>
-                {positionSegments.before}
-              </Text>
-            ) : null}
-            <Text style={{ ...baseTextStyle, color: colors.warning }}>
-              {positionSegments.highlight}
-            </Text>
-            {positionSegments.after ? (
-              <Text style={{ ...baseTextStyle, color: colors.ink }}>
-                {positionSegments.after}
-              </Text>
-            ) : null}
-          </Text>
+          <PositionHighlightText
+            segments={positionSegments}
+            baseTextStyle={baseTextStyle}
+          />
         ) : needsSplit ? (
           <Text
             numberOfLines={1}
