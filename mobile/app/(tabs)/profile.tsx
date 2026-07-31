@@ -2,7 +2,6 @@ import { Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { Avatar, Button, Card, ScreenContainer } from '@/components/ui';
-import { LearningAnalysisCard } from '@/features/adaptive';
 import { ProfileSwitcher } from '@/features/profile';
 import { RewardsStrip } from '@/features/rewards';
 import { useProfileStore } from '@/store/profileStore';
@@ -39,7 +38,13 @@ export default function ProfileScreen() {
 
       <ProfileSwitcher onAddProfile={() => router.push('/onboarding')} />
 
-      <LearningAnalysisCard />
+      <Card className="mb-4">
+        <Text className="mb-2 text-base font-semibold text-ink">Für Eltern</Text>
+        <Text className="mb-4 text-sm text-ink-muted">
+          Lernstatistik und personalisierte Wiederholungsübungen — ohne Karteninhalte.
+        </Text>
+        <Button label="Elternbereich öffnen" variant="secondary" onPress={() => router.push('/parent')} />
+      </Card>
 
       <Card className="mb-4">
         <Text className="mb-2 text-base text-ink-muted">

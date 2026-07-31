@@ -1,5 +1,6 @@
 /** Virtual exercise id — not part of static content. */
 export const WEAKNESS_EXERCISE_ID = 'adaptive-weaknesses';
+export const PERSONALIZED_EXERCISE_ID = 'adaptive-personalized';
 
 export const MIN_ATTEMPTS_FOR_ANALYSIS = 5;
 

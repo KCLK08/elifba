@@ -42,6 +42,8 @@ export interface UseTrainerOptions {
    * (e.g. weakness practice aggregating cards from multiple exercises).
    */
   cardPersistence?: Record<string, CardPersistenceTarget>;
+  /** Use a specific child profile (e.g. parent-started exercise). */
+  profileIdOverride?: string;
 }
 
 export interface UseTrainerResult {
@@ -136,8 +138,8 @@ export function useTrainer(
   const practice = options.practice === true;
   const visualReset = options.visualReset === true;
   const cardPersistence = options.cardPersistence;
-
-  const profileId = useProfileStore((s) => s.activeProfileId) ?? 'profile-1';
+  const profileId =
+    options.profileIdOverride ?? useProfileStore((s) => s.activeProfileId) ?? 'profile-1';
   const loadExerciseProgress = useProgressStore((s) => s.loadExerciseProgress);
   const saveCardProgress = useProgressStore((s) => s.saveCardProgress);
   const markExerciseVisited = useProgressStore((s) => s.markExerciseVisited);
