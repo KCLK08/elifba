@@ -7,7 +7,7 @@ import { MIN_ATTEMPTS_FOR_ANALYSIS, WEAKNESS_THRESHOLD } from './constants';
 import { classifyWeakness, getEffectiveWeaknessScore } from './scoring';
 import type { AdaptiveCardStats } from './types';
 
-export type ParentCardStatus = 'secure' | 'practice' | 'repeat';
+export type ParentCardStatus = 'secure' | 'practice' | 'repeat' | 'not_started';
 
 export interface ParentDashboardStats {
   totalCards: number;
@@ -93,7 +93,7 @@ export function classifyParentCardStatus(
 
   if (mastered) return 'secure';
   if (attempted) return 'practice';
-  return 'repeat';
+  return 'not_started';
 }
 
 function collectWeeklyAnswers(
@@ -148,6 +148,7 @@ export function computeParentDashboardStats(
     secure: 0,
     practice: 0,
     repeat: 0,
+    not_started: 0,
   };
 
   let attemptedCards = 0;

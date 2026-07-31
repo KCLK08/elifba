@@ -15,6 +15,7 @@ import type {
   AdaptiveProfileSummary,
   WeakCardEntry,
 } from '@/adaptive';
+import type { WeaknessCardRef } from '@/adaptive';
 import type { TrainerAnswer } from '@/features/learning/trainer/scoring';
 import { getItem, setItem, storageKeys } from '@/services/storage';
 
@@ -26,9 +27,17 @@ interface RecordAnswerInput {
   answer: TrainerAnswer;
 }
 
+export interface PersonalizedSession {
+  profileId: string;
+  refs: WeaknessCardRef[];
+  needCards: number;
+  secureCards: number;
+}
+
 interface AdaptiveState {
   byCard: Record<string, AdaptiveCardStats>;
   hydrated: boolean;
+  personalizedSessions: Record<string, PersonalizedSession>;
   hydrate: () => Promise<void>;
   recordAnswer: (input: RecordAnswerInput) => Promise<void>;
   getCardStats: (
@@ -38,6 +47,12 @@ interface AdaptiveState {
   ) => AdaptiveCardStats | null;
   getProfileSummary: (profileId: string) => AdaptiveProfileSummary;
   getWeakCards: (profileId: string, limit?: number) => WeakCardEntry[];
+  setPersonalizedSession: (
+    profileId: string,
+    session: Omit<PersonalizedSession, 'profileId'>,
+  ) => void;
+  getPersonalizedSession: (profileId: string) => PersonalizedSession | null;
+  clearPersonalizedSession: (profileId: string) => void;
   removeProfileAdaptive: (profileId: string) => Promise<void>;
   resetAllAdaptive: () => Promise<void>;
 }
@@ -49,6 +64,7 @@ async function persist(byCard: Record<string, AdaptiveCardStats>) {
 export const useAdaptiveStore = create<AdaptiveState>((set, get) => ({
   byCard: {},
   hydrated: false,
+  personalizedSessions: {},
 
   hydrate: async () => {
     const byCard =
@@ -110,7 +126,26 @@ export const useAdaptiveStore = create<AdaptiveState>((set, get) => ({
       .slice(0, limit);
   },
 
+  setPersonalizedSession: (profileId, session) => {
+    set((state) => ({
+      personalizedSessions: {
+        ...state.personalizedSessions,
+        [profileId]: { profileId, ...session },
+      },
+    }));
+  },
+
+  getPersonalizedSession: (profileId) => get().personalizedSessions[profileId] ?? null,
+
+  clearPersonalizedSession: (profileId) => {
+    set((state) => {
+      const { [profileId]: _removed, ...rest } = state.personalizedSessions;
+      return { personalizedSessions: rest };
+    });
+  },
+
   removeProfileAdaptive: async (profileId) => {
+    get().clearPersonalizedSession(profileId);
     const prefix = `${profileId}::`;
     const byCard = Object.fromEntries(
       Object.entries(get().byCard).filter(([key]) => !key.startsWith(prefix)),

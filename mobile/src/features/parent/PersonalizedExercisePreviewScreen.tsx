@@ -13,6 +13,7 @@ export function PersonalizedExercisePreviewScreen() {
   const activeProfileId = useProfileStore((s) => s.activeProfileId);
   const profiles = useProfileStore((s) => s.profiles);
   const byCard = useAdaptiveStore((s) => s.byCard);
+  const setPersonalizedSession = useAdaptiveStore((s) => s.setPersonalizedSession);
 
   const profileId = paramProfileId ?? activeProfileId ?? '';
   const profile = profiles.find((p) => p.id === profileId);
@@ -68,12 +69,17 @@ export function PersonalizedExercisePreviewScreen() {
 
         <Button
           label="Übung starten"
-          onPress={() =>
+          onPress={() => {
+            setPersonalizedSession(profileId, {
+              refs: built.refs,
+              needCards: built.needCards,
+              secureCards: built.secureCards,
+            });
             router.push({
               pathname: '/exercise/adaptive-personalized',
               params: { profileId },
-            })
-          }
+            });
+          }}
         />
         <View className="mt-3">
           <Button label="Abbrechen" variant="ghost" onPress={() => router.back()} />
