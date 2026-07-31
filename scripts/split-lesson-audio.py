@@ -214,6 +214,7 @@ def detect_segments(
     min_silence_ms: float = 450.0,
     min_speech_ms: float = 180.0,
     padding_ms: float = 35.0,
+    first_segment_lead_ms: float = 200.0,
 ) -> SplitAnalysis:
     rms = compute_rms(samples, sample_rate, frame_ms)
     threshold = adaptive_silence_threshold(rms)
@@ -232,7 +233,8 @@ def detect_segments(
 
     segments: list[Segment] = []
     for i, (start_f, end_f) in enumerate(speech_regions):
-        start_ms = max(0, frames_to_ms(start_f, frame_ms) - int(padding_ms))
+        lead_ms = first_segment_lead_ms if i == 0 else padding_ms
+        start_ms = max(0, frames_to_ms(start_f, frame_ms) - int(lead_ms))
         end_ms = min(total_ms, frames_to_ms(end_f, frame_ms) + int(padding_ms))
 
         if i > 0:
@@ -340,6 +342,12 @@ def main() -> int:
         help="Minimum speech length per segment (default: 180)",
     )
     parser.add_argument(
+        "--first-segment-lead-ms",
+        type=float,
+        default=200.0,
+        help="Extra lead-in before the first word (default: 200)",
+    )
+    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Analyse only — print split points, do not write MP3 files",
@@ -387,6 +395,7 @@ def main() -> int:
         samples,
         min_silence_ms=args.min_silence_ms,
         min_speech_ms=args.min_speech_ms,
+        first_segment_lead_ms=args.first_segment_lead_ms,
     )
     detected = len(analysis.segments)
 
