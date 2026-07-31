@@ -52,6 +52,8 @@ export default function RootLayout() {
             options={{ title: 'Übung', headerBackTitle: 'Zurück' }}
           />
           <Stack.Screen name="settings" options={{ title: 'Einstellungen' }} />
+          <Stack.Screen name="parent/index" options={{ title: 'Elternbereich' }} />
+          <Stack.Screen name="parent/exercise-preview" options={{ title: 'Persönliche Wiederholung' }} />
           <Stack.Screen name="profile/[profileId]" options={{ title: 'Profil bearbeiten' }} />
         </Stack>
       </GestureHandlerRootView>
