@@ -4,6 +4,7 @@ import { getItem, setItem, storageKeys } from '@/services/storage';
 import { resolveAvatarId } from '@/constants/avatars';
 import { useProgressStore } from '@/store/progressStore';
 import { useRewardsStore } from '@/store/rewardsStore';
+import { useAdaptiveStore } from '@/store/adaptiveStore';
 import type { AvatarId, Profile } from '@/types';
 
 interface ProfileState {
@@ -124,6 +125,7 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
     await persist(nextProfiles, nextActiveId);
     await useProgressStore.getState().removeProfileProgress(id);
     await useRewardsStore.getState().removeProfileRewards(id);
+    await useAdaptiveStore.getState().removeProfileAdaptive(id);
 
     return nextProfiles.length > 0;
   },

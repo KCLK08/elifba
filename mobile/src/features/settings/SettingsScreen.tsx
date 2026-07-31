@@ -6,6 +6,7 @@ import { Button, Card, Modal, ScreenContainer } from '@/components/ui';
 import { useExerciseSettingsStore, type SessionLimit } from '@/store/exerciseSettingsStore';
 import { useProgressStore } from '@/store/progressStore';
 import { useRewardsStore } from '@/store/rewardsStore';
+import { useAdaptiveStore } from '@/store/adaptiveStore';
 import { useSettingsStore } from '@/store/settingsStore';
 
 const LIMITS: SessionLimit[] = [10, 20, 30, 'all'];
@@ -21,6 +22,7 @@ export function SettingsScreen() {
   const resetProgress = useProgressStore((s) => s.resetLocalProgress);
   const resetRewards = useRewardsStore((s) => s.resetAllRewards);
   const resetExerciseSettings = useExerciseSettingsStore((s) => s.resetAll);
+  const resetAdaptive = useAdaptiveStore((s) => s.resetAllAdaptive);
   const [confirmReset, setConfirmReset] = useState(false);
   const [resetting, setResetting] = useState(false);
 
@@ -29,6 +31,7 @@ export function SettingsScreen() {
     try {
       await resetProgress();
       await resetRewards();
+      await resetAdaptive();
       await resetExerciseSettings();
       setConfirmReset(false);
       router.replace('/(tabs)/learn');

@@ -22,7 +22,6 @@ export function OnboardingScreen() {
     setSaving(true);
     try {
       await createProfile(values);
-      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       router.replace('/(tabs)/home');
     } finally {
       setSaving(false);

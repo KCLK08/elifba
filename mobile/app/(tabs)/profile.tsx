@@ -2,6 +2,7 @@ import { Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { Avatar, Button, Card, ScreenContainer } from '@/components/ui';
+import { LearningAnalysisCard } from '@/features/adaptive';
 import { ProfileSwitcher } from '@/features/profile';
 import { RewardsStrip } from '@/features/rewards';
 import { useProfileStore } from '@/store/profileStore';
@@ -37,6 +38,8 @@ export default function ProfileScreen() {
       ) : null}
 
       <ProfileSwitcher onAddProfile={() => router.push('/onboarding')} />
+
+      <LearningAnalysisCard />
 
       <Card className="mb-4">
         <Text className="mb-2 text-base text-ink-muted">

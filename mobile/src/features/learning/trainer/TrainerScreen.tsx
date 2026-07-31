@@ -6,6 +6,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import type { ContentTrainerExercise } from '@/content';
 import { getExerciseById, getLessonById } from '@/content';
+import { WEAKNESS_EXERCISE_ID } from '@/adaptive';
 import { getExerciseProgressTotal } from '@/content/exerciseUtils';
 import { Button, IconButton, Modal, ScreenContainer } from '@/components/ui';
 import { starsEarnedFromProgress } from '@/components/ui/starMilestones';
@@ -18,7 +19,7 @@ import { useSettingsStore } from '@/store/settingsStore';
 import type { TrainerMode } from '@/types';
 
 import { ArabicLetterView } from '../arabic';
-import { useTrainer } from './useTrainer';
+import { useTrainer, type CardPersistenceTarget } from './useTrainer';
 import { TrainerQueueBar } from './TrainerQueueBar';
 import { TrainerSettingsModal } from './TrainerSettingsModal';
 import type { TrainerAnswer } from './scoring';
@@ -27,6 +28,7 @@ interface TrainerScreenProps {
   exercise: ContentTrainerExercise;
   practice?: boolean;
   visualReset?: boolean;
+  cardPersistence?: Record<string, CardPersistenceTarget>;
   onPracticeAgain?: () => void;
   onContinueSession?: () => void;
   onSettingsApplied?: () => void;
@@ -68,6 +70,7 @@ export function TrainerScreen({
   exercise,
   practice = false,
   visualReset = false,
+  cardPersistence,
   onPracticeAgain,
   onContinueSession,
   onSettingsApplied,
@@ -91,7 +94,7 @@ export function TrainerScreen({
     mode,
     masteryLearned,
     masteryTotal,
-  } = useTrainer(exercise, { practice, visualReset });
+  } = useTrainer(exercise, { practice, visualReset, cardPersistence });
 
   const profileId = useProfileStore((s) => s.activeProfileId) ?? '';
   const getLessonPercent = useProgressStore((s) => s.getLessonPercent);
@@ -126,9 +129,11 @@ export function TrainerScreen({
     ? Math.round((masteryLearned / masteryTotal) * 100)
     : 0;
 
+  const isAdaptiveWeakness = exercise.id === WEAKNESS_EXERCISE_ID;
+
   // Award stars immediately when mastery milestones are reached
   useEffect(() => {
-    if (!profileId || practice) return;
+    if (!profileId || practice || isAdaptiveWeakness) return;
     const target = starsEarnedFromProgress(masteryPercent);
     void (async () => {
       const gained = await awardMilestones(profileId, exercise.id, target);
@@ -165,7 +170,7 @@ export function TrainerScreen({
 
   // Session / exercise finished → mark complete (stars already granted at milestones)
   useEffect(() => {
-    if (!completed || completionHandled.current || !profileId || practice) return;
+    if (!completed || completionHandled.current || !profileId || practice || isAdaptiveWeakness) return;
     if (hasMoreSessions) {
       completionHandled.current = true;
       return;

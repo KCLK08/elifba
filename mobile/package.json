@@ -45,6 +45,7 @@
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
     "check-content": "tsx scripts/check-content.ts",
+    "test-adaptive": "tsx scripts/test-adaptive.ts",
     "preflight": "npm run typecheck && npm run check-content && npx expo-doctor"
   },
   "private": true
