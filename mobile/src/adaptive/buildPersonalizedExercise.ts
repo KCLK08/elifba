@@ -104,11 +104,8 @@ export function selectPersonalizedCards(
 
   if (combined.length >= limit) {
     const refs = combined.slice(0, limit);
-    return {
-      refs,
-      needCards: Math.min(needSelected.length, refs.length),
-      secureCards: refs.length - Math.min(needSelected.length, refs.length),
-    };
+    const needCards = refs.filter((r) => needIds.has(r.virtualId)).length;
+    return { refs, needCards, secureCards: refs.length - needCards };
   }
 
   // Fill remaining slots from any available cards
@@ -116,8 +113,26 @@ export function selectPersonalizedCards(
     (r) => !combined.some((c) => c.virtualId === r.virtualId),
   );
   const refs = [...combined, ...filler].slice(0, limit);
-  const needCards = refs.filter((r) => needSelected.some((n) => n.virtualId === r.virtualId)).length;
+  const needCards = refs.filter((r) => needIds.has(r.virtualId)).length;
   return { refs, needCards, secureCards: refs.length - needCards };
+}
+
+export function exerciseFromPersonalizedRefs(
+  refs: WeaknessCardRef[],
+): ContentTrainerExercise {
+  return {
+    id: PERSONALIZED_EXERCISE_ID,
+    lessonId: 'adaptive',
+    title: 'Persönliche Wiederholung',
+    type: 'trainer',
+    order: 0,
+    audioBase: '',
+    mode: 'shuffle',
+    cards: refs.map((ref) => ({
+      ...ref.card,
+      id: ref.virtualId,
+    })),
+  };
 }
 
 export function buildPersonalizedExercise(
@@ -132,21 +147,12 @@ export function buildPersonalizedExercise(
   const { refs, needCards, secureCards } = selectPersonalizedCards(profileId, byCard);
   if (refs.length === 0) return null;
 
-  const exercise: ContentTrainerExercise = {
-    id: PERSONALIZED_EXERCISE_ID,
-    lessonId: 'adaptive',
-    title: 'Persönliche Wiederholung',
-    type: 'trainer',
-    order: 0,
-    audioBase: '',
-    mode: 'shuffle',
-    cards: refs.map((ref) => ({
-      ...ref.card,
-      id: ref.virtualId,
-    })),
+  return {
+    exercise: exerciseFromPersonalizedRefs(refs),
+    refs,
+    needCards,
+    secureCards,
   };
-
-  return { exercise, refs, needCards, secureCards };
 }
 
 export function buildPersonalizedCardPersistence(

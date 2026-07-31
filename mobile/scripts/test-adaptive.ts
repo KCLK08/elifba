@@ -5,6 +5,7 @@
 import {
   applyAdaptiveAnswer,
   classifyWeakness,
+  classifyParentCardStatus,
   createAdaptiveCardStats,
   getEffectiveWeaknessScore,
   needsLearningAttention,
@@ -98,6 +99,32 @@ function assert(cond: boolean, message: string) {
   assert(
     effective < beforeDecay,
     `Fall Decay — effektiver Wert sinkt (${effective} < ${beforeDecay})`,
+  );
+}
+
+// Parent analytics: unattempted cards are not_started (not repeat)
+{
+  assert(
+    classifyParentCardStatus(null, null) === 'not_started',
+    'Unattempted card — not_started',
+  );
+  const stats = createAdaptiveCardStats({
+    profileId: PROFILE,
+    exerciseId: EXERCISE,
+    cardId: CARD,
+    lessonId: LESSON,
+  });
+  assert(
+    classifyParentCardStatus(null, stats) === 'not_started',
+    'Adaptive record without attempts — not_started',
+  );
+  assert(
+    classifyParentCardStatus('lernen', null) === 'practice',
+    'In-progress card without adaptive data — practice',
+  );
+  assert(
+    classifyParentCardStatus('gelernt', null) === 'secure',
+    'Mastered card without adaptive data — secure',
   );
 }
 

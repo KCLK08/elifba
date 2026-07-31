@@ -6,6 +6,7 @@ import {
   PERSONALIZED_EXERCISE_ID,
   buildPersonalizedCardPersistence,
   buildPersonalizedExercise,
+  exerciseFromPersonalizedRefs,
 } from '@/adaptive';
 import { Button, ScreenContainer } from '@/components/ui';
 import { TrainerScreen } from '@/features/learning/trainer';
@@ -18,16 +19,25 @@ export function PersonalizedExerciseScreen() {
   const activeProfileId = useProfileStore((s) => s.activeProfileId) ?? '';
   const profileId = paramProfileId ?? activeProfileId;
   const byCard = useAdaptiveStore((s) => s.byCard);
+  const getPersonalizedSession = useAdaptiveStore((s) => s.getPersonalizedSession);
   const [runKey, setRunKey] = useState(0);
 
   const { exercise, cardPersistence } = useMemo(() => {
+    const session = getPersonalizedSession(profileId);
+    if (session) {
+      return {
+        exercise: exerciseFromPersonalizedRefs(session.refs),
+        cardPersistence: buildPersonalizedCardPersistence(session.refs),
+      };
+    }
+
     const built = buildPersonalizedExercise(profileId, byCard);
     if (!built) return { exercise: null, cardPersistence: undefined };
     return {
       exercise: built.exercise,
       cardPersistence: buildPersonalizedCardPersistence(built.refs),
     };
-  }, [profileId, byCard]);
+  }, [profileId, byCard, getPersonalizedSession, runKey]);
 
   if (!exercise || !cardPersistence) {
     return (

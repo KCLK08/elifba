@@ -7,6 +7,7 @@ export * from './parentAnalytics';
 export {
   buildPersonalizedExercise,
   buildPersonalizedCardPersistence,
+  exerciseFromPersonalizedRefs,
   selectPersonalizedCards,
   PERSONALIZED_SESSION_SIZE,
 } from './buildPersonalizedExercise';
