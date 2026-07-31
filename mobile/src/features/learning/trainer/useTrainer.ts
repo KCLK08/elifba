@@ -10,6 +10,7 @@ import {
 } from '@/store/exerciseSettingsStore';
 import { useProgressStore } from '@/store/progressStore';
 import { useProfileStore } from '@/store/profileStore';
+import { useAdaptiveStore } from '@/store/adaptiveStore';
 import { useSettingsStore } from '@/store/settingsStore';
 import type { TrainerMode } from '@/types';
 
@@ -22,6 +23,12 @@ import {
   type TrainerAnswer,
 } from './scoring';
 
+export interface CardPersistenceTarget {
+  exerciseId: string;
+  lessonId: string;
+  cardId: string;
+}
+
 export interface UseTrainerOptions {
   /** Full replay including mastered cards; does not write mastery. */
   practice?: boolean;
@@ -30,6 +37,11 @@ export interface UseTrainerOptions {
    * new queue from content — does NOT clear progressStore mastery.
    */
   visualReset?: boolean;
+  /**
+   * Maps session card ids to the real exercise/card for persistence
+   * (e.g. weakness practice aggregating cards from multiple exercises).
+   */
+  cardPersistence?: Record<string, CardPersistenceTarget>;
 }
 
 export interface UseTrainerResult {
@@ -65,6 +77,39 @@ function buildFreshStats(exercise: ContentTrainerExercise): Record<string, CardS
   return initial;
 }
 
+function buildMultiSourcePersistedStats(
+  exercise: ContentTrainerExercise,
+  profileId: string,
+  cardPersistence: Record<string, CardPersistenceTarget>,
+  loadExerciseProgress: ReturnType<typeof useProgressStore.getState>['loadExerciseProgress'],
+): Record<string, CardStat> {
+  const initial: Record<string, CardStat> = {};
+  for (const card of exercise.cards) {
+    const target = cardPersistence[card.id];
+    if (!target) {
+      initial[card.id] = createInitialStat();
+      continue;
+    }
+    const source = loadExerciseProgress(profileId, target.exerciseId);
+    initial[card.id] = source?.cards[target.cardId] ?? createInitialStat();
+  }
+  return initial;
+}
+
+function countMasteryLearnedMulti(
+  exercise: ContentTrainerExercise,
+  profileId: string,
+  cardPersistence: Record<string, CardPersistenceTarget>,
+  loadExerciseProgress: ReturnType<typeof useProgressStore.getState>['loadExerciseProgress'],
+): number {
+  return exercise.cards.filter((card) => {
+    const target = cardPersistence[card.id];
+    if (!target) return false;
+    const source = loadExerciseProgress(profileId, target.exerciseId);
+    return source?.cards[target.cardId]?.status === 'gelernt';
+  }).length;
+}
+
 function buildPersistedStats(
   exercise: ContentTrainerExercise,
   persisted: ReturnType<ReturnType<typeof useProgressStore.getState>['loadExerciseProgress']>,
@@ -90,6 +135,7 @@ export function useTrainer(
 ): UseTrainerResult {
   const practice = options.practice === true;
   const visualReset = options.visualReset === true;
+  const cardPersistence = options.cardPersistence;
 
   const profileId = useProfileStore((s) => s.activeProfileId) ?? 'profile-1';
   const loadExerciseProgress = useProgressStore((s) => s.loadExerciseProgress);
@@ -101,13 +147,16 @@ export function useTrainer(
   const sessionLimit = storedExerciseSettings?.sessionLimit ?? globalLimit;
   const mode = storedExerciseSettings?.mode ?? 'sequence';
 
-  const persisted = useMemo(
-    () => loadExerciseProgress(profileId, exercise.id),
-    [loadExerciseProgress, profileId, exercise.id, byExercise],
-  );
+  const persisted = useMemo(() => {
+    if (cardPersistence) return null;
+    return loadExerciseProgress(profileId, exercise.id);
+  }, [loadExerciseProgress, profileId, exercise.id, byExercise, cardPersistence]);
 
   const bootstrap = useMemo(() => {
-    const masteryStats = buildPersistedStats(exercise, persisted);
+    const masteryStats = cardPersistence
+      ? buildMultiSourcePersistedStats(exercise, profileId, cardPersistence, loadExerciseProgress)
+      : buildPersistedStats(exercise, persisted);
+
     // Visual/session state: fresh on practice or restart — never wipe progressStore
     const sessionStats =
       practice || visualReset ? buildFreshStats(exercise) : masteryStats;
@@ -176,14 +225,23 @@ export function useTrainer(
   ).length;
   const sessionTotal = sessionCardIds.size;
   const masteryTotal = exercise.cards.length;
-  const masteryLearned = countMasteryLearned(exercise, persisted);
+  const masteryLearned = cardPersistence
+    ? countMasteryLearnedMulti(exercise, profileId, cardPersistence, loadExerciseProgress)
+    : countMasteryLearned(exercise, persisted);
 
   const sessionComplete = queue.length === 0 && (sessionTotal > 0 || masteryTotal === 0);
 
   // Open cards from durable mastery — not from visual session stats
   const openRemaining = practice
     ? 0
-    : exercise.cards.filter((c) => persisted?.cards[c.id]?.status !== 'gelernt').length;
+    : cardPersistence
+      ? exercise.cards.filter((card) => {
+          const target = cardPersistence[card.id];
+          if (!target) return true;
+          const source = loadExerciseProgress(profileId, target.exerciseId);
+          return source?.cards[target.cardId]?.status !== 'gelernt';
+        }).length
+      : exercise.cards.filter((c) => persisted?.cards[c.id]?.status !== 'gelernt').length;
 
   const hasMoreSessions = !practice && sessionComplete && openRemaining > 0;
   const masteryComplete = practice
@@ -210,13 +268,27 @@ export function useTrainer(
       // Practice: session-only — do not touch mastery store
       if (practice) return;
 
+      const persistTarget = cardPersistence?.[card.id] ?? {
+        exerciseId: exercise.id,
+        lessonId: exercise.lessonId,
+        cardId: card.id,
+      };
+
       void saveCardProgress({
         profileId,
-        lessonId: exercise.lessonId,
-        exerciseId: exercise.id,
-        cardId: card.id,
+        lessonId: persistTarget.lessonId,
+        exerciseId: persistTarget.exerciseId,
+        cardId: persistTarget.cardId,
         status: nextStat.status,
         correctCount: nextStat.correctCount,
+      });
+
+      void useAdaptiveStore.getState().recordAnswer({
+        profileId,
+        lessonId: persistTarget.lessonId,
+        exerciseId: persistTarget.exerciseId,
+        cardId: persistTarget.cardId,
+        answer: value,
       });
 
       markExerciseVisited({
@@ -226,7 +298,7 @@ export function useTrainer(
         lastCardPreview: exercise.cards[nextQueue[0]]?.arabic,
       });
     },
-    [exercise, profileId, saveCardProgress, markExerciseVisited, practice],
+    [exercise, profileId, saveCardProgress, markExerciseVisited, practice, cardPersistence],
   );
 
   const listen = useCallback(async (): Promise<'ok' | 'muted' | 'missing' | 'error'> => {

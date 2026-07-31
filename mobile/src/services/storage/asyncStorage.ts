@@ -12,6 +12,7 @@ export const storageKeys = {
   progress: 'progress',
   rewards: 'rewards',
   exerciseSettings: 'exercise_settings',
+  adaptive: 'adaptive_learning',
 } as const;
 
 
