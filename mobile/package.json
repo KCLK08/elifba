@@ -46,7 +46,8 @@
     "typecheck": "tsc --noEmit",
     "check-content": "tsx scripts/check-content.ts",
     "test-adaptive": "tsx scripts/test-adaptive.ts",
-    "preflight": "npm run typecheck && npm run check-content && npx expo-doctor"
+    "test-parent": "tsx scripts/test-parent-analytics.ts",
+    "preflight": "npm run typecheck && npm run check-content && npm run test-adaptive && npm run test-parent && npx expo-doctor"
   },
   "private": true
 }
