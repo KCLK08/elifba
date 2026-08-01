@@ -155,9 +155,13 @@ export function useTrainer(
   }, [loadExerciseProgress, profileId, exercise.id, byExercise, cardPersistence]);
 
   const bootstrap = useMemo(() => {
+    const persistedSnapshot = cardPersistence
+      ? null
+      : loadExerciseProgress(profileId, exercise.id);
+
     const masteryStats = cardPersistence
       ? buildMultiSourcePersistedStats(exercise, profileId, cardPersistence, loadExerciseProgress)
-      : buildPersistedStats(exercise, persisted);
+      : buildPersistedStats(exercise, persistedSnapshot);
 
     // Visual/session state: fresh on practice or restart — never wipe progressStore
     const sessionStats =
@@ -181,13 +185,25 @@ export function useTrainer(
       if (id) sessionCardIds.add(id);
     }
     return { sessionStats, initialQueue, sessionCardIds };
-    // Remount via key when practice / visualReset / settings / batch change
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [
+    exercise,
+    profileId,
+    practice,
+    visualReset,
+    sessionLimit,
+    mode,
+    cardPersistence,
+    loadExerciseProgress,
+  ]);
 
   const [stats, setStats] = useState(bootstrap.sessionStats);
   const [queue, setQueue] = useState(bootstrap.initialQueue);
   const sessionCardIds = bootstrap.sessionCardIds;
+
+  useEffect(() => {
+    setStats(bootstrap.sessionStats);
+    setQueue(bootstrap.initialQueue);
+  }, [bootstrap]);
 
   const statsRef = useRef(stats);
   const queueRef = useRef(queue);

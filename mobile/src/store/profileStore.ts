@@ -115,7 +115,7 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
 
   deleteProfile: async (id) => {
     const { profiles, activeProfileId } = get();
-    if (!profiles.some((p) => p.id === id)) return true;
+    if (!profiles.some((p) => p.id === id)) return profiles.length > 0;
 
     const nextProfiles = profiles.filter((p) => p.id !== id);
     const nextActiveId =
