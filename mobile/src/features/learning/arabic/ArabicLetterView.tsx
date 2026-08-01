@@ -4,55 +4,57 @@ import type { ContentCard } from '@/content';
 import { ARABIC_FONT_FAMILY } from '@/constants/arabicFonts';
 import { colors, typography } from '@/constants/theme';
 
-import { mergeHighlightIndices, splitPositionHighlight } from './arabicDisplay';
+import {
+  colorForLesson1Grapheme,
+  MARKING_COLOR,
+  resolveArabicColoringMode,
+  resolveHighlightMode,
+  resolveHighlightTargets,
+} from './arabicColoring';
+import { mergeHighlightIndices, splitPositionHighlight, buildArabicColorRuns } from './arabicDisplay';
 import { normalizeArabicDisplay, segmentGraphemes } from './graphemes';
+import { ColoredArabicText } from './ColoredArabicText';
 import { PositionHighlightText } from './PositionHighlightText';
-
-function isPositionFormMode(mode: ContentCard['highlightMode']): mode is 'initial' | 'middle' | 'final' {
-  return mode === 'initial' || mode === 'middle' || mode === 'final';
-}
 
 interface ArabicLetterViewProps {
   card: ContentCard;
-}
-
-function colorForGrapheme(
-  index: number,
-  highlight: Set<number>,
-  tags: string[] | undefined,
-): string {
-  if (highlight.has(index)) return colors.warning;
-  if (tags?.includes('lispel')) return '#2563EB';
-  if (tags?.includes('accentGreen')) return colors.success;
-  return colors.ink;
+  exerciseId?: string;
+  lessonId?: string;
 }
 
 /**
  * Large RTL Arabic display, centered in the card.
  *
- * Arabic cursive joining only works inside a single text run. Nested <Text> per
- * grapheme breaks connections — a problem in Lektion 2 (Anfangs-/Mittel-/Endstellung).
- * Position exercises use PositionHighlightText (Skia Paragraph on native, display:contents
- * on web) so the full word is shaped once while the target letter stays highlighted.
+ * Coloring is lesson-specific: L1 (dumpfe + Lispel + ر), L2 (Position), L3 Fetha
+ * Einzelnd (Vokalzeichen). All other lessons stay black.
+ * Multi-color text uses ColoredArabicText so cursive joins stay intact.
  */
-export function ArabicLetterView({ card }: ArabicLetterViewProps) {
+export function ArabicLetterView({ card, exerciseId, lessonId }: ArabicLetterViewProps) {
   const arabic = normalizeArabicDisplay(card.arabic);
   const graphemes = segmentGraphemes(arabic);
-  const isWord = graphemes.length > 2 || Boolean(card.highlightMode);
-  const fontSize = isWord ? typography.arabicMedium : typography.arabicLarge;
-  const highlight = mergeHighlightIndices(arabic, card.target, card.highlightMode);
+  const fontSize = typography.arabicLarge;
   const lineHeight = Math.round(fontSize * 1.45);
 
-  const positionSegments =
-    isPositionFormMode(card.highlightMode)
-      ? splitPositionHighlight(arabic, card.target, card.highlightMode)
-      : null;
+  const coloringMode = resolveArabicColoringMode(exerciseId, lessonId);
+  const highlightTargets = resolveHighlightTargets(coloringMode, card.target);
+  const highlightMode = resolveHighlightMode(coloringMode, card.highlightMode);
+  const highlight = mergeHighlightIndices(arabic, highlightTargets, highlightMode);
 
-  const colorsPerGrapheme = graphemes.map((_, index) =>
-    colorForGrapheme(index, highlight, card.tags),
-  );
+  const positionSegments = highlightMode
+    ? splitPositionHighlight(arabic, highlightTargets, highlightMode)
+    : null;
+
+  const colorsPerGrapheme = graphemes.map((_, index) => {
+    if (coloringMode === 'lesson1-emphatic') {
+      return colorForLesson1Grapheme(index, highlight, card.tags);
+    }
+    return highlight.has(index) ? MARKING_COLOR : colors.ink;
+  });
   const hasMixedColors = new Set(colorsPerGrapheme).size > 1;
-  const needsSplit = !positionSegments && hasMixedColors;
+  const useShapedColors = !positionSegments && hasMixedColors;
+  const colorRuns = useShapedColors
+    ? buildArabicColorRuns(graphemes, colorsPerGrapheme)
+    : [];
   const displayColor = colorsPerGrapheme[0] ?? colors.ink;
 
   const baseTextStyle = {
@@ -77,26 +79,10 @@ export function ArabicLetterView({ card }: ArabicLetterViewProps) {
           <PositionHighlightText
             segments={positionSegments}
             baseTextStyle={baseTextStyle}
+            highlightColor={MARKING_COLOR}
           />
-        ) : needsSplit ? (
-          <Text
-            numberOfLines={1}
-            adjustsFontSizeToFit
-            minimumFontScale={0.45}
-            style={{ ...baseTextStyle, color: colors.ink, alignSelf: 'stretch' }}
-          >
-            {graphemes.map((grapheme, index) => (
-              <Text
-                key={`${card.id}-${index}`}
-                style={{
-                  ...baseTextStyle,
-                  color: colorsPerGrapheme[index],
-                }}
-              >
-                {grapheme}
-              </Text>
-            ))}
-          </Text>
+        ) : useShapedColors ? (
+          <ColoredArabicText runs={colorRuns} baseTextStyle={baseTextStyle} />
         ) : (
           <Text
             numberOfLines={1}

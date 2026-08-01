@@ -389,7 +389,11 @@ export function TrainerScreen({
       />
 
       <View className="mt-1">
-        <ArabicLetterView card={currentCard} />
+        <ArabicLetterView
+          card={currentCard}
+          exerciseId={exercise.id}
+          lessonId={exercise.lessonId}
+        />
       </View>
 
       <View className="mt-3 items-center">

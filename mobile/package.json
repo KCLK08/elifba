@@ -47,7 +47,8 @@
     "check-content": "tsx scripts/check-content.ts",
     "test-adaptive": "tsx scripts/test-adaptive.ts",
     "test-parent": "tsx scripts/test-parent-analytics.ts",
-    "preflight": "npm run typecheck && npm run check-content && npm run test-adaptive && npm run test-parent && npx expo-doctor"
+    "test-arabic-coloring": "tsx scripts/test-arabic-coloring.ts",
+    "preflight": "npm run typecheck && npm run check-content && npm run test-adaptive && npm run test-parent && npm run test-arabic-coloring && npx expo-doctor"
   },
   "private": true
 }
