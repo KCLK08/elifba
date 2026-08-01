@@ -45,6 +45,7 @@
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
     "check-content": "tsx scripts/check-content.ts",
+    "generate-android-icon": "python3 scripts/generate-android-icon.py",
     "test-adaptive": "tsx scripts/test-adaptive.ts",
     "test-parent": "tsx scripts/test-parent-analytics.ts",
     "test-arabic-coloring": "tsx scripts/test-arabic-coloring.ts",
