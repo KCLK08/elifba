@@ -18,7 +18,7 @@
       "package": "com.elifba.kids",
       "versionCode": 1,
       "adaptiveIcon": {
-        "backgroundColor": "#000000",
+        "backgroundColor": "#b44d2a",
         "foregroundImage": "./assets/images/android-icon-foreground.png"
       },
       "predictiveBackGestureEnabled": false

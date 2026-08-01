@@ -17,6 +17,8 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "assets" / "images" / "icon.png"
 OUTPUT = ROOT / "assets" / "images" / "android-icon-foreground.png"
 CANVAS = 1024
+# PWA theme_color (manifest.webmanifest) — set in app.json android.adaptiveIcon.backgroundColor
+PWA_ICON_BACKGROUND = "#b44d2a"
 # Slightly inside the 66% safe zone for extra headroom on launchers.
 SAFE_ZONE_RATIO = 0.58
 
