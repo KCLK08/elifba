@@ -8,6 +8,8 @@ export interface AppSettings {
   animationsEnabled: boolean;
   /** Global default for new exercises / fallback. */
   sessionLimit: SessionLimit;
+  /** Betatest: Karten in Übungen markieren und Reports erstellen. */
+  betaTestMode: boolean;
 }
 
 interface SettingsState extends AppSettings {
@@ -15,6 +17,7 @@ interface SettingsState extends AppSettings {
   hydrate: () => Promise<void>;
   toggleSound: () => Promise<void>;
   toggleAnimations: () => Promise<void>;
+  toggleBetaTestMode: () => Promise<void>;
   setSessionLimit: (limit: SessionLimit) => Promise<void>;
 }
 
@@ -22,6 +25,7 @@ const defaults: AppSettings = {
   soundEnabled: true,
   animationsEnabled: true,
   sessionLimit: 10,
+  betaTestMode: false,
 };
 
 function normalizeLimit(value: unknown): SessionLimit {
@@ -34,6 +38,7 @@ function snapshot(state: AppSettings): AppSettings {
     soundEnabled: state.soundEnabled,
     animationsEnabled: state.animationsEnabled,
     sessionLimit: state.sessionLimit,
+    betaTestMode: state.betaTestMode,
   };
 }
 
@@ -47,6 +52,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
       ...defaults,
       ...stored,
       sessionLimit: normalizeLimit(stored?.sessionLimit ?? defaults.sessionLimit),
+      betaTestMode: stored?.betaTestMode === true,
       hydrated: true,
     });
   },
@@ -61,6 +67,12 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
     const animationsEnabled = !get().animationsEnabled;
     set({ animationsEnabled });
     await setItem(storageKeys.settings, snapshot({ ...get(), animationsEnabled }));
+  },
+
+  toggleBetaTestMode: async () => {
+    const betaTestMode = !get().betaTestMode;
+    set({ betaTestMode });
+    await setItem(storageKeys.settings, snapshot({ ...get(), betaTestMode }));
   },
 
   setSessionLimit: async (sessionLimit) => {

@@ -19,6 +19,8 @@ interface TrainerQueueBarProps {
   starLearned: number;
   /** Total exercise cards for star milestones. */
   starTotal: number;
+  /** Betatest: cards flagged for content review. */
+  markedCardIds?: Set<string>;
 }
 
 function colorFor(status: CardStatus | undefined): string {
@@ -76,6 +78,7 @@ export function TrainerQueueBar({
   stats,
   starLearned,
   starTotal,
+  markedCardIds,
 }: TrainerQueueBarProps) {
   const order = buildSessionProgressBarOrder(sessionIndices, queue, cardIds, stats);
   const starPercent = starTotal ? Math.round((starLearned / starTotal) * 100) : 0;
@@ -106,6 +109,7 @@ export function TrainerQueueBar({
           ) : (
             order.map((cardIndex) => {
               const id = cardIds[cardIndex] ?? `idx-${cardIndex}`;
+              const marked = markedCardIds?.has(id) ?? false;
               return (
                 <View
                   key={id}
@@ -114,6 +118,8 @@ export function TrainerQueueBar({
                     backgroundColor: colorFor(stats[id]?.status),
                     marginHorizontal: 0.5,
                     borderRadius: 2,
+                    borderWidth: marked ? 2 : 0,
+                    borderColor: marked ? '#F97316' : 'transparent',
                   }}
                 />
               );

@@ -49,7 +49,8 @@
     "test-adaptive": "tsx scripts/test-adaptive.ts",
     "test-parent": "tsx scripts/test-parent-analytics.ts",
     "test-arabic-coloring": "tsx scripts/test-arabic-coloring.ts",
-    "preflight": "npm run typecheck && npm run check-content && npm run test-adaptive && npm run test-parent && npm run test-arabic-coloring && npx expo-doctor"
+    "test-beta-report": "tsx scripts/test-beta-report.ts",
+    "preflight": "npm run typecheck && npm run check-content && npm run test-adaptive && npm run test-parent && npm run test-arabic-coloring && npm run test-beta-report && npx expo-doctor"
   },
   "private": true
 }

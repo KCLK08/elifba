@@ -9,6 +9,12 @@ import { getExerciseById, getLessonById } from '@/content';
 import { WEAKNESS_EXERCISE_ID, PERSONALIZED_EXERCISE_ID } from '@/adaptive';
 import { getExerciseProgressTotal } from '@/content/exerciseUtils';
 import { Button, IconButton, Modal, ScreenContainer } from '@/components/ui';
+import {
+  BetaFeedbackControls,
+  BetaIssueModal,
+  BetaReportModal,
+  useBetaFeedbackSession,
+} from '@/features/beta';
 import { starsEarnedFromProgress } from '@/components/ui/starMilestones';
 import { StarEarnBurst } from '@/features/rewards/StarEarnBurst';
 import { useExerciseSettingsStore, type SessionLimit } from '@/store/exerciseSettingsStore';
@@ -110,6 +116,7 @@ export function TrainerScreen({
   );
   const animationsEnabled = useSettingsStore((s) => s.animationsEnabled);
   const soundEnabled = useSettingsStore((s) => s.soundEnabled);
+  const betaTestMode = useSettingsStore((s) => s.betaTestMode);
   const setExerciseSettings = useExerciseSettingsStore((s) => s.setSettings);
   const completionHandled = useRef(false);
   const sessionStarsEarned = useRef(0);
@@ -121,6 +128,9 @@ export function TrainerScreen({
   const [restartConfirmOpen, setRestartConfirmOpen] = useState(false);
   const [burstKey, setBurstKey] = useState(0);
   const [showBurst, setShowBurst] = useState(false);
+
+  const beta = useBetaFeedbackSession(exercise);
+  const showBetaFeedback = betaTestMode && !practice;
 
   const storeMasteryPercent = profileId
     ? getExercisePercent(profileId, exercise.id, exercise.cards.length)
@@ -309,6 +319,30 @@ export function TrainerScreen({
     />
   );
 
+  const betaModals = showBetaFeedback ? (
+    <>
+      <BetaIssueModal
+        visible={beta.issueModalOpen}
+        arabic={beta.activeCard?.arabic ?? ''}
+        category={beta.draftCategory}
+        note={beta.draftNote}
+        isEditing={beta.activeCard ? beta.isCardMarked(beta.activeCard.id) : false}
+        onChangeCategory={beta.setDraftCategory}
+        onChangeNote={beta.setDraftNote}
+        onSave={beta.saveIssue}
+        onRemove={() => {
+          if (beta.activeCard) beta.removeIssue(beta.activeCard.id);
+        }}
+        onClose={beta.closeIssueModal}
+      />
+      <BetaReportModal
+        visible={beta.reportModalOpen}
+        report={beta.report}
+        onClose={beta.closeReportModal}
+      />
+    </>
+  ) : null;
+
   if (completed || !currentCard) {
     const earned = sessionStarsEarned.current;
     const copy = summaryCopy(earned);
@@ -334,6 +368,7 @@ export function TrainerScreen({
           stats={stats}
           starLearned={masteryLearned}
           starTotal={masteryTotal}
+          markedCardIds={showBetaFeedback ? beta.markedCardIds : undefined}
         />
         <View className="mt-8 gap-3">
           {hasMoreSessions && onContinueSession ? (
@@ -357,11 +392,26 @@ export function TrainerScreen({
           ) : null}
           <Button label="Zurück zum Lernpfad" variant="ghost" onPress={leaveToPath} />
         </View>
+        {showBetaFeedback && beta.issueCount > 0 ? (
+          <View className="mt-4">
+            <BetaFeedbackControls
+              phase="finish"
+              issueCount={beta.issueCount}
+              primaryLabel={`Abschließen (${beta.issueCount})`}
+              onPrimaryPress={() => beta.handlePrimaryAction(null)}
+              onSwitchToFinish={beta.switchToFinishPhase}
+              onSwitchToMarking={beta.switchToMarkingPhase}
+            />
+          </View>
+        ) : null}
         {settingsModal}
         {restartModal}
+        {betaModals}
       </ScreenContainer>
     );
   }
+
+  const cardMarked = currentCard ? beta.isCardMarked(currentCard.id) : false;
 
   return (
     <ScreenContainer scroll={false} className="justify-start">
@@ -386,14 +436,33 @@ export function TrainerScreen({
         stats={stats}
         starLearned={masteryLearned}
         starTotal={masteryTotal}
+        markedCardIds={showBetaFeedback ? beta.markedCardIds : undefined}
       />
 
-      <View className="mt-1">
-        <ArabicLetterView
-          card={currentCard}
-          exerciseId={exercise.id}
-          lessonId={exercise.lessonId}
+      {showBetaFeedback ? (
+        <BetaFeedbackControls
+          phase={beta.phase}
+          issueCount={beta.issueCount}
+          primaryLabel={beta.primaryButtonLabel}
+          onPrimaryPress={() => beta.handlePrimaryAction(currentCard)}
+          onSwitchToFinish={beta.switchToFinishPhase}
+          onSwitchToMarking={beta.switchToMarkingPhase}
         />
+      ) : null}
+
+      <View className="mt-1">
+        <View className={cardMarked ? 'rounded-card border-2 border-warning' : ''}>
+          <ArabicLetterView
+            card={currentCard}
+            exerciseId={exercise.id}
+            lessonId={exercise.lessonId}
+          />
+        </View>
+        {cardMarked ? (
+          <Text className="mt-1 text-center text-xs font-semibold text-warning">
+            Gemeldet im Betatest
+          </Text>
+        ) : null}
       </View>
 
       <View className="mt-3 items-center">
@@ -445,6 +514,7 @@ export function TrainerScreen({
 
       {settingsModal}
       {restartModal}
+      {betaModals}
     </ScreenContainer>
   );
 }

@@ -15,9 +15,11 @@ export function SettingsScreen() {
   const router = useRouter();
   const soundEnabled = useSettingsStore((s) => s.soundEnabled);
   const animationsEnabled = useSettingsStore((s) => s.animationsEnabled);
+  const betaTestMode = useSettingsStore((s) => s.betaTestMode);
   const sessionLimit = useSettingsStore((s) => s.sessionLimit);
   const toggleSound = useSettingsStore((s) => s.toggleSound);
   const toggleAnimations = useSettingsStore((s) => s.toggleAnimations);
+  const toggleBetaTestMode = useSettingsStore((s) => s.toggleBetaTestMode);
   const setSessionLimit = useSettingsStore((s) => s.setSessionLimit);
   const resetProgress = useProgressStore((s) => s.resetLocalProgress);
   const resetRewards = useRewardsStore((s) => s.resetAllRewards);
@@ -85,6 +87,19 @@ export function SettingsScreen() {
         <Text className="mt-3 text-sm text-ink-muted">
           Begrenzt, wie viele Karten du in einer Lernrunde übst. Gelernte Karten bleiben gespeichert.
         </Text>
+      </Card>
+
+      <Card className="mb-4 border border-warning bg-warning-soft">
+        <Text className="mb-2 text-lg font-bold text-ink">Betatest</Text>
+        <Text className="mb-3 text-base text-ink-muted">
+          In Übungen Karten mit Fehlern markieren (Audio oder Buchstaben) und einen Report
+          erstellen, den du an uns senden kannst.
+        </Text>
+        <Button
+          label={betaTestMode ? 'Betatest-Modus an ✓' : 'Betatest-Modus aus'}
+          variant={betaTestMode ? 'secondary' : 'ghost'}
+          onPress={() => void toggleBetaTestMode()}
+        />
       </Card>
 
       <Card className="mb-4 border border-warning">
