@@ -4,6 +4,7 @@
  */
 
 import type { HighlightMode } from '@/types';
+import { colors as themeColors } from '@/constants/theme';
 
 import { segmentGraphemes } from './graphemes';
 
@@ -11,6 +12,42 @@ export interface PositionHighlightSegments {
   before: string;
   highlight: string;
   after: string;
+}
+
+export interface ArabicColorRun {
+  text: string;
+  color: string;
+}
+
+/** Merge adjacent graphemes with the same color into shaping-safe runs. */
+export function buildArabicColorRuns(
+  graphemes: string[],
+  graphemeColors: string[],
+): ArabicColorRun[] {
+  const runs: ArabicColorRun[] = [];
+  for (let i = 0; i < graphemes.length; i += 1) {
+    const text = graphemes[i] ?? '';
+    const color = graphemeColors[i] ?? themeColors.ink;
+    const last = runs[runs.length - 1];
+    if (last && last.color === color) {
+      last.text += text;
+    } else {
+      runs.push({ text, color });
+    }
+  }
+  return runs.filter((run) => run.text.length > 0);
+}
+
+export function segmentsToColorRuns(
+  segments: PositionHighlightSegments,
+  inkColor: string,
+  highlightColor: string,
+): ArabicColorRun[] {
+  const runs: ArabicColorRun[] = [];
+  if (segments.before) runs.push({ text: segments.before, color: inkColor });
+  if (segments.highlight) runs.push({ text: segments.highlight, color: highlightColor });
+  if (segments.after) runs.push({ text: segments.after, color: inkColor });
+  return runs;
 }
 
 /**

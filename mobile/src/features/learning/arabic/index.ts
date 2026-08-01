@@ -8,6 +8,7 @@ export {
   BRIGHT_LETTER_COLOR,
   MARKING_COLOR,
 } from './arabicColoring';
+export { ColoredArabicText } from './ColoredArabicText';
 export { PositionHighlightText } from './PositionHighlightText';
 export * from './arabicDisplay';
 export * from './graphemes';

@@ -11,8 +11,9 @@ import {
   resolveHighlightMode,
   resolveHighlightTargets,
 } from './arabicColoring';
-import { mergeHighlightIndices, splitPositionHighlight } from './arabicDisplay';
+import { mergeHighlightIndices, splitPositionHighlight, buildArabicColorRuns } from './arabicDisplay';
 import { normalizeArabicDisplay, segmentGraphemes } from './graphemes';
+import { ColoredArabicText } from './ColoredArabicText';
 import { PositionHighlightText } from './PositionHighlightText';
 
 interface ArabicLetterViewProps {
@@ -26,6 +27,7 @@ interface ArabicLetterViewProps {
  *
  * Coloring is lesson-specific: L1 (dumpfe + Lispel + ر), L2 (Position), L3 Fetha
  * Einzelnd (Vokalzeichen). All other lessons stay black.
+ * Multi-color text uses ColoredArabicText so cursive joins stay intact.
  */
 export function ArabicLetterView({ card, exerciseId, lessonId }: ArabicLetterViewProps) {
   const arabic = normalizeArabicDisplay(card.arabic);
@@ -49,7 +51,10 @@ export function ArabicLetterView({ card, exerciseId, lessonId }: ArabicLetterVie
     return highlight.has(index) ? MARKING_COLOR : colors.ink;
   });
   const hasMixedColors = new Set(colorsPerGrapheme).size > 1;
-  const needsSplit = !positionSegments && hasMixedColors;
+  const useShapedColors = !positionSegments && hasMixedColors;
+  const colorRuns = useShapedColors
+    ? buildArabicColorRuns(graphemes, colorsPerGrapheme)
+    : [];
   const displayColor = colorsPerGrapheme[0] ?? colors.ink;
 
   const baseTextStyle = {
@@ -76,25 +81,8 @@ export function ArabicLetterView({ card, exerciseId, lessonId }: ArabicLetterVie
             baseTextStyle={baseTextStyle}
             highlightColor={MARKING_COLOR}
           />
-        ) : needsSplit ? (
-          <Text
-            numberOfLines={1}
-            adjustsFontSizeToFit
-            minimumFontScale={0.45}
-            style={{ ...baseTextStyle, color: colors.ink, alignSelf: 'stretch' }}
-          >
-            {graphemes.map((grapheme, index) => (
-              <Text
-                key={`${card.id}-${index}`}
-                style={{
-                  ...baseTextStyle,
-                  color: colorsPerGrapheme[index],
-                }}
-              >
-                {grapheme}
-              </Text>
-            ))}
-          </Text>
+        ) : useShapedColors ? (
+          <ColoredArabicText runs={colorRuns} baseTextStyle={baseTextStyle} />
         ) : (
           <Text
             numberOfLines={1}

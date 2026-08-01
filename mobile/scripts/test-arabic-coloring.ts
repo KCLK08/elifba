@@ -12,6 +12,7 @@ import {
   resolveHighlightMode,
   resolveHighlightTargets,
 } from '../src/features/learning/arabic/arabicColoring';
+import { buildArabicColorRuns } from '../src/features/learning/arabic/arabicDisplay';
 
 function assert(cond: boolean, message: string) {
   if (!cond) {
@@ -104,5 +105,13 @@ assert(
   resolveHighlightMode('none', 'initial') === null,
   'None — position mode suppressed',
 );
+
+{
+  const runs = buildArabicColorRuns(['ل', 'ا'], ['#f00', '#f00']);
+  assert(runs.length === 1 && runs[0]!.text === 'لا', 'Color runs merge same-color graphemes (لا)');
+  const mixed = buildArabicColorRuns(['ر', 'َ', 'ز'], ['#000', '#f00', '#000']);
+  assert(mixed.length === 3, 'Color runs split on color changes');
+  assert(mixed[1]!.text === 'َ' && mixed[1]!.color === '#f00', 'Color runs preserve harakat segment');
+}
 
 console.log('\nAll arabic coloring checks passed.');
