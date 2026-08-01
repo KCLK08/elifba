@@ -65,7 +65,7 @@ function WebPositionHighlightText({
   segments,
   baseTextStyle,
   inkColor = colors.ink,
-  highlightColor = colors.warning,
+  highlightColor = colors.error,
 }: PositionHighlightTextProps) {
   const contentsStyle = { display: 'contents' as const };
 
@@ -98,7 +98,7 @@ function NativePositionHighlightText({
   segments,
   baseTextStyle,
   inkColor = colors.ink,
-  highlightColor = colors.warning,
+  highlightColor = colors.error,
 }: PositionHighlightTextProps) {
   const [width, setWidth] = useState(0);
   const fontSize = typeof baseTextStyle.fontSize === 'number' ? baseTextStyle.fontSize : 64;

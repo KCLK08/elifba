@@ -4,52 +4,47 @@ import type { ContentCard } from '@/content';
 import { ARABIC_FONT_FAMILY } from '@/constants/arabicFonts';
 import { colors, typography } from '@/constants/theme';
 
+import {
+  resolveArabicColoringMode,
+  resolveHighlightMode,
+  resolveHighlightTargets,
+} from './arabicColoring';
 import { mergeHighlightIndices, splitPositionHighlight } from './arabicDisplay';
 import { normalizeArabicDisplay, segmentGraphemes } from './graphemes';
 import { PositionHighlightText } from './PositionHighlightText';
 
-function isPositionFormMode(mode: ContentCard['highlightMode']): mode is 'initial' | 'middle' | 'final' {
-  return mode === 'initial' || mode === 'middle' || mode === 'final';
-}
+/** Red marking for pedagogical highlights (dumpfe Buchstaben, Position, Vokale). */
+const MARKING_COLOR = colors.error;
 
 interface ArabicLetterViewProps {
   card: ContentCard;
-}
-
-function colorForGrapheme(
-  index: number,
-  highlight: Set<number>,
-  tags: string[] | undefined,
-): string {
-  if (highlight.has(index)) return colors.warning;
-  if (tags?.includes('lispel')) return '#2563EB';
-  if (tags?.includes('accentGreen')) return colors.success;
-  return colors.ink;
+  exerciseId?: string;
+  lessonId?: string;
 }
 
 /**
  * Large RTL Arabic display, centered in the card.
  *
- * Arabic cursive joining only works inside a single text run. Nested <Text> per
- * grapheme breaks connections — a problem in Lektion 2 (Anfangs-/Mittel-/Endstellung).
- * Position exercises use PositionHighlightText (Skia Paragraph on native, display:contents
- * on web) so the full word is shaped once while the target letter stays highlighted.
+ * Coloring is lesson-specific: only L1 (dumpfe Buchstaben), L2 (Position), and
+ * L3 Fetha Einzelnd (Vokalzeichen) use red markings. All other lessons stay black.
  */
-export function ArabicLetterView({ card }: ArabicLetterViewProps) {
+export function ArabicLetterView({ card, exerciseId, lessonId }: ArabicLetterViewProps) {
   const arabic = normalizeArabicDisplay(card.arabic);
   const graphemes = segmentGraphemes(arabic);
-  const isWord = graphemes.length > 2 || Boolean(card.highlightMode);
-  const fontSize = isWord ? typography.arabicMedium : typography.arabicLarge;
-  const highlight = mergeHighlightIndices(arabic, card.target, card.highlightMode);
+  const fontSize = typography.arabicLarge;
   const lineHeight = Math.round(fontSize * 1.45);
 
-  const positionSegments =
-    isPositionFormMode(card.highlightMode)
-      ? splitPositionHighlight(arabic, card.target, card.highlightMode)
-      : null;
+  const coloringMode = resolveArabicColoringMode(exerciseId, lessonId);
+  const highlightTargets = resolveHighlightTargets(coloringMode, card.target);
+  const highlightMode = resolveHighlightMode(coloringMode, card.highlightMode);
+  const highlight = mergeHighlightIndices(arabic, highlightTargets, highlightMode);
+
+  const positionSegments = highlightMode
+    ? splitPositionHighlight(arabic, highlightTargets, highlightMode)
+    : null;
 
   const colorsPerGrapheme = graphemes.map((_, index) =>
-    colorForGrapheme(index, highlight, card.tags),
+    highlight.has(index) ? MARKING_COLOR : colors.ink,
   );
   const hasMixedColors = new Set(colorsPerGrapheme).size > 1;
   const needsSplit = !positionSegments && hasMixedColors;
@@ -77,6 +72,7 @@ export function ArabicLetterView({ card }: ArabicLetterViewProps) {
           <PositionHighlightText
             segments={positionSegments}
             baseTextStyle={baseTextStyle}
+            highlightColor={MARKING_COLOR}
           />
         ) : needsSplit ? (
           <Text
