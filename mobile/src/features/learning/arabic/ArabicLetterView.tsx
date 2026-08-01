@@ -5,6 +5,8 @@ import { ARABIC_FONT_FAMILY } from '@/constants/arabicFonts';
 import { colors, typography } from '@/constants/theme';
 
 import {
+  colorForLesson1Grapheme,
+  MARKING_COLOR,
   resolveArabicColoringMode,
   resolveHighlightMode,
   resolveHighlightTargets,
@@ -12,9 +14,6 @@ import {
 import { mergeHighlightIndices, splitPositionHighlight } from './arabicDisplay';
 import { normalizeArabicDisplay, segmentGraphemes } from './graphemes';
 import { PositionHighlightText } from './PositionHighlightText';
-
-/** Red marking for pedagogical highlights (dumpfe Buchstaben, Position, Vokale). */
-const MARKING_COLOR = colors.error;
 
 interface ArabicLetterViewProps {
   card: ContentCard;
@@ -25,8 +24,8 @@ interface ArabicLetterViewProps {
 /**
  * Large RTL Arabic display, centered in the card.
  *
- * Coloring is lesson-specific: only L1 (dumpfe Buchstaben), L2 (Position), and
- * L3 Fetha Einzelnd (Vokalzeichen) use red markings. All other lessons stay black.
+ * Coloring is lesson-specific: L1 (dumpfe + Lispel + ر), L2 (Position), L3 Fetha
+ * Einzelnd (Vokalzeichen). All other lessons stay black.
  */
 export function ArabicLetterView({ card, exerciseId, lessonId }: ArabicLetterViewProps) {
   const arabic = normalizeArabicDisplay(card.arabic);
@@ -43,9 +42,12 @@ export function ArabicLetterView({ card, exerciseId, lessonId }: ArabicLetterVie
     ? splitPositionHighlight(arabic, highlightTargets, highlightMode)
     : null;
 
-  const colorsPerGrapheme = graphemes.map((_, index) =>
-    highlight.has(index) ? MARKING_COLOR : colors.ink,
-  );
+  const colorsPerGrapheme = graphemes.map((_, index) => {
+    if (coloringMode === 'lesson1-emphatic') {
+      return colorForLesson1Grapheme(index, highlight, card.tags);
+    }
+    return highlight.has(index) ? MARKING_COLOR : colors.ink;
+  });
   const hasMixedColors = new Set(colorsPerGrapheme).size > 1;
   const needsSplit = !positionSegments && hasMixedColors;
   const displayColor = colorsPerGrapheme[0] ?? colors.ink;

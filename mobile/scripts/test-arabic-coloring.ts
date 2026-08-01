@@ -3,7 +3,11 @@
  * Run: npm run test-arabic-coloring
  */
 import {
+  BRIGHT_LETTER_COLOR,
+  colorForLesson1Grapheme,
   EMPHATIC_LETTERS,
+  LISPEL_COLOR,
+  MARKING_COLOR,
   resolveArabicColoringMode,
   resolveHighlightMode,
   resolveHighlightTargets,
@@ -53,9 +57,26 @@ assert(
   resolveHighlightTargets('lesson1-emphatic', 'ب') === null,
   'L1 — non-emphatic target removed',
 );
+
 assert(
-  resolveHighlightTargets('lesson1-emphatic', ['lispel']) === null,
-  'L1 — lispel tag target ignored',
+  colorForLesson1Grapheme(0, new Set([0]), undefined) === MARKING_COLOR,
+  'L1 — red for emphatic highlight',
+);
+assert(
+  colorForLesson1Grapheme(0, new Set(), ['lispel']) === LISPEL_COLOR,
+  'L1 — blue for lispel tag',
+);
+assert(
+  colorForLesson1Grapheme(0, new Set(), ['accentGreen']) === BRIGHT_LETTER_COLOR,
+  'L1 — green for ra tag',
+);
+assert(
+  colorForLesson1Grapheme(0, new Set([0]), ['lispel']) === MARKING_COLOR,
+  'L1 — red wins over lispel on same grapheme (ظ)',
+);
+assert(
+  colorForLesson1Grapheme(0, new Set(), undefined) === '#134E4A',
+  'L1 — default ink for unmarked letters',
 );
 
 assert(

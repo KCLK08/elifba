@@ -4,8 +4,21 @@
  * Red highlights only where pedagogy requires them; all other text stays ink-colored.
  */
 
+import { colors } from '@/constants/theme';
+
 /** Dumpfe / emphatic letters (Elifba: „stumme“ Buchstaben). */
 export const EMPHATIC_LETTERS = new Set(['خ', 'ص', 'ض', 'ط', 'ظ', 'غ', 'ق']);
+
+/** Red marking for dumpfe Buchstaben, Position, Vokale. */
+export const MARKING_COLOR = colors.error;
+
+/** Lispel-Buchstaben (ث, ذ, ظ) — nur Lektion 1. */
+export const LISPEL_COLOR = '#2563EB';
+
+/** Heller Buchstabe ر — nur Lektion 1. */
+export const BRIGHT_LETTER_COLOR = colors.success;
+
+export const INK_COLOR = colors.ink;
 
 /** Combining harakat and related vowel marks. */
 const HARAKAT_PATTERN = /[\u064B-\u065F\u0670]/;
@@ -80,4 +93,16 @@ export function resolveHighlightMode(
     return highlightMode;
   }
   return null;
+}
+
+/** Per-grapheme color for Lektion 1 (dumpf rot, Lispel blau, ر grün). */
+export function colorForLesson1Grapheme(
+  index: number,
+  highlight: Set<number>,
+  tags: string[] | undefined,
+): string {
+  if (highlight.has(index)) return MARKING_COLOR;
+  if (tags?.includes('lispel')) return LISPEL_COLOR;
+  if (tags?.includes('accentGreen')) return BRIGHT_LETTER_COLOR;
+  return INK_COLOR;
 }
