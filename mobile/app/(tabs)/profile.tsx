@@ -1,9 +1,11 @@
 import { Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
+import { WEAKNESS_EXERCISE_ID } from '@/adaptive';
 import { Avatar, Button, Card, ScreenContainer } from '@/components/ui';
 import { ProfileSwitcher } from '@/features/profile';
 import { RewardsStrip } from '@/features/rewards';
+import { useAdaptiveStore } from '@/store/adaptiveStore';
 import { useProfileStore } from '@/store/profileStore';
 import { EMPTY_REWARDS, useRewardsStore } from '@/store/rewardsStore';
 
@@ -15,6 +17,10 @@ export default function ProfileScreen() {
   });
   const profileId = useProfileStore((s) => s.activeProfileId) ?? '';
   const rewards = useRewardsStore((s) => s.byProfile[profileId] ?? EMPTY_REWARDS);
+  const weaknessCount = useAdaptiveStore((s) => {
+    const summary = s.getProfileSummary(profileId);
+    return summary.observeCards + summary.weaknessCards;
+  });
 
   return (
     <ScreenContainer>
@@ -37,6 +43,19 @@ export default function ProfileScreen() {
       ) : null}
 
       <ProfileSwitcher onAddProfile={() => router.push('/onboarding')} />
+
+      <Card className="mb-4">
+        <Text className="mb-2 text-base font-semibold text-ink">Schwächen üben</Text>
+        <Text className="mb-4 text-sm text-ink-muted">
+          {weaknessCount > 0
+            ? `${weaknessCount} Karten mit Lernbedarf — automatisch aus deinen Antworten erkannt.`
+            : 'Übe in den Lektionen weiter. Nach genügend Versuchen erkennt das System, wo Wiederholung hilft.'}
+        </Text>
+        <Button
+          label="Meine Schwächen üben"
+          onPress={() => router.push(`/exercise/${WEAKNESS_EXERCISE_ID}`)}
+        />
+      </Card>
 
       <Card className="mb-4">
         <Text className="mb-2 text-base font-semibold text-ink">Für Eltern</Text>

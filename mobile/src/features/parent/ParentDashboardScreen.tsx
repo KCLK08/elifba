@@ -84,7 +84,7 @@ export function ParentDashboardScreen() {
                 <Avatar avatar={profile.avatar} size="sm" />
                 <Text className="ml-3 flex-1 text-lg font-bold text-ink">{profile.name}</Text>
                 {selected ? (
-                  <Text className="text-sm font-semibold text-primary">Aktiv</Text>
+                  <Text className="text-sm font-semibold text-primary">Ausgewählt</Text>
                 ) : null}
               </Pressable>
             );
