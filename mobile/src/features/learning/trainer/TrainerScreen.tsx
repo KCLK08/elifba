@@ -414,7 +414,7 @@ export function TrainerScreen({
   const cardMarked = currentCard ? beta.isCardMarked(currentCard.id) : false;
 
   return (
-    <ScreenContainer scroll={false} className="justify-start">
+    <ScreenContainer className="justify-start">
       <Stack.Screen options={{ title: exercise.title, headerRight }} />
       {burst}
 
