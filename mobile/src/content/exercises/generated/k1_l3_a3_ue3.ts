@@ -104,7 +104,7 @@ export const k1_l3_a3_ue3: ContentExercise = {
   },
   {
     id: "k1-l3-a3-ue3-card-14",
-    arabic: "حُمَرَ",
+    arabic: "حُمِرَ",
     audioId: "k1-l3-a3-ue3-14",
     sourcePage: 23,
     tags: [],
@@ -160,7 +160,7 @@ export const k1_l3_a3_ue3: ContentExercise = {
   },
   {
     id: "k1-l3-a3-ue3-card-22",
-    arabic: "أُذْنَ",
+    arabic: "أُذِنَ",
     audioId: "k1-l3-a3-ue3-22",
     sourcePage: 23,
     tags: [],
@@ -174,7 +174,7 @@ export const k1_l3_a3_ue3: ContentExercise = {
   },
   {
     id: "k1-l3-a3-ue3-card-24",
-    arabic: "ضُعِفَ",
+    arabic: "ضَعُفَ",
     audioId: "k1-l3-a3-ue3-24",
     sourcePage: 23,
     tags: [],
@@ -188,7 +188,7 @@ export const k1_l3_a3_ue3: ContentExercise = {
   },
   {
     id: "k1-l3-a3-ue3-card-26",
-    arabic: "عُشْبَ",
+    arabic: "عَشُبَ",
     audioId: "k1-l3-a3-ue3-26",
     sourcePage: 23,
     tags: [],
@@ -230,7 +230,7 @@ export const k1_l3_a3_ue3: ContentExercise = {
   },
   {
     id: "k1-l3-a3-ue3-card-32",
-    arabic: "أَخُذَ",
+    arabic: "أُخِذَ",
     audioId: "k1-l3-a3-ue3-32",
     sourcePage: 23,
     tags: [],
@@ -258,7 +258,7 @@ export const k1_l3_a3_ue3: ContentExercise = {
   },
   {
     id: "k1-l3-a3-ue3-card-36",
-    arabic: "بُعِدَ",
+    arabic: "بَعُدَ",
     audioId: "k1-l3-a3-ue3-36",
     sourcePage: 23,
     tags: [],
