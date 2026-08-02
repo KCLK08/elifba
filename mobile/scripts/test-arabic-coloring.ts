@@ -13,6 +13,7 @@ import {
   resolveHighlightTargets,
 } from '../src/features/learning/arabic/arabicColoring';
 import { buildArabicColorRuns } from '../src/features/learning/arabic/arabicDisplay';
+import { resolveArabicTrainerMetrics } from '../src/features/learning/arabic/arabicTrainerMetrics';
 
 function assert(cond: boolean, message: string) {
   if (!cond) {
@@ -112,6 +113,13 @@ assert(
   const mixed = buildArabicColorRuns(['ر', 'َ', 'ز'], ['#000', '#f00', '#000']);
   assert(mixed.length === 3, 'Color runs split on color changes');
   assert(mixed[1]!.text === 'َ' && mixed[1]!.color === '#f00', 'Color runs preserve harakat segment');
+}
+
+{
+  const metrics = resolveArabicTrainerMetrics(112);
+  assert(metrics.minDisplayHeight >= metrics.lineHeight, 'Trainer min height fits line box');
+  assert(metrics.minDisplayHeight > 140, 'Trainer min height leaves room for harakat above');
+  assert(metrics.harakatTopInset > 0, 'Trainer harakat top inset is positive');
 }
 
 console.log('\nAll arabic coloring checks passed.');

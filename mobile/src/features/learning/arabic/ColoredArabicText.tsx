@@ -9,6 +9,7 @@ import {
 } from '@shopify/react-native-skia';
 
 import type { ArabicColorRun } from './arabicDisplay';
+import { resolveArabicTrainerMetrics } from './arabicTrainerMetrics';
 
 interface ColoredArabicTextProps {
   runs: ArabicColorRun[];
@@ -73,19 +74,24 @@ function NativeColoredArabicText({ runs, baseTextStyle }: ColoredArabicTextProps
   const lineHeight =
     typeof baseTextStyle.lineHeight === 'number'
       ? baseTextStyle.lineHeight
-      : Math.round(fontSize * 1.45);
+      : resolveArabicTrainerMetrics(fontSize).lineHeight;
+  const harakatTopInset =
+    typeof baseTextStyle.paddingTop === 'number'
+      ? baseTextStyle.paddingTop
+      : resolveArabicTrainerMetrics(fontSize).harakatTopInset;
 
   const paragraph = useMemo(() => {
     if (width <= 0) return null;
     return buildSkiaParagraph(runs, fontSize, lineHeight, width);
   }, [runs, fontSize, lineHeight, width]);
 
-  const height = paragraph ? Math.ceil(paragraph.getHeight()) : lineHeight;
+  const paragraphHeight = paragraph ? Math.ceil(paragraph.getHeight()) : lineHeight;
+  const height = paragraphHeight + harakatTopInset;
 
   return (
     <View
       className="w-full"
-      style={{ minHeight: lineHeight }}
+      style={{ minHeight: height, overflow: 'visible' }}
       onLayout={(event) => {
         const next = Math.floor(event.nativeEvent.layout.width);
         if (next > 0 && next !== width) setWidth(next);
@@ -93,7 +99,7 @@ function NativeColoredArabicText({ runs, baseTextStyle }: ColoredArabicTextProps
     >
       {paragraph ? (
         <Canvas style={{ width, height }}>
-          <Paragraph paragraph={paragraph} x={0} y={0} width={width} />
+          <Paragraph paragraph={paragraph} x={0} y={harakatTopInset} width={width} />
         </Canvas>
       ) : null}
     </View>

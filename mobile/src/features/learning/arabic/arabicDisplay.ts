@@ -3,10 +3,32 @@
  * German UI stays LTR — only Arabic content uses these styles.
  */
 
+import type { TextStyle } from 'react-native';
+
 import type { HighlightMode } from '@/types';
 import { colors as themeColors } from '@/constants/theme';
 
+import { resolveArabicTrainerMetrics } from './arabicTrainerMetrics';
 import { segmentGraphemes } from './graphemes';
+
+export { resolveArabicTrainerMetrics } from './arabicTrainerMetrics';
+export type { ArabicTrainerMetrics } from './arabicTrainerMetrics';
+
+export function buildArabicTrainerTextStyle(
+  fontSize: number,
+  extra: TextStyle = {},
+): TextStyle {
+  const { lineHeight, harakatTopInset } = resolveArabicTrainerMetrics(fontSize);
+  return {
+    writingDirection: 'rtl',
+    textAlign: 'center',
+    fontSize,
+    fontWeight: '700',
+    lineHeight,
+    paddingTop: harakatTopInset,
+    ...extra,
+  };
+}
 
 export interface PositionHighlightSegments {
   before: string;

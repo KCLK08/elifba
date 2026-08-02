@@ -1,4 +1,4 @@
-import { Text, View } from 'react-native';
+import { Platform, Text, View } from 'react-native';
 
 import type { ContentCard } from '@/content';
 import { ARABIC_FONT_FAMILY } from '@/constants/arabicFonts';
@@ -11,7 +11,13 @@ import {
   resolveHighlightMode,
   resolveHighlightTargets,
 } from './arabicColoring';
-import { mergeHighlightIndices, splitPositionHighlight, buildArabicColorRuns } from './arabicDisplay';
+import {
+  buildArabicTrainerTextStyle,
+  mergeHighlightIndices,
+  resolveArabicTrainerMetrics,
+  splitPositionHighlight,
+  buildArabicColorRuns,
+} from './arabicDisplay';
 import { normalizeArabicDisplay, segmentGraphemes } from './graphemes';
 import { ColoredArabicText } from './ColoredArabicText';
 import { PositionHighlightText } from './PositionHighlightText';
@@ -33,7 +39,7 @@ export function ArabicLetterView({ card, exerciseId, lessonId }: ArabicLetterVie
   const arabic = normalizeArabicDisplay(card.arabic);
   const graphemes = segmentGraphemes(arabic);
   const fontSize = typography.arabicLarge;
-  const lineHeight = Math.round(fontSize * 1.45);
+  const { minDisplayHeight } = resolveArabicTrainerMetrics(fontSize);
 
   const coloringMode = resolveArabicColoringMode(exerciseId, lessonId);
   const highlightTargets = resolveHighlightTargets(coloringMode, card.target);
@@ -58,20 +64,16 @@ export function ArabicLetterView({ card, exerciseId, lessonId }: ArabicLetterVie
   const displayColor = colorsPerGrapheme[0] ?? colors.ink;
 
   const baseTextStyle = {
-    writingDirection: 'rtl' as const,
-    textAlign: 'center' as const,
+    ...buildArabicTrainerTextStyle(fontSize),
     fontFamily: ARABIC_FONT_FAMILY,
-    fontSize,
-    fontWeight: '700' as const,
-    lineHeight,
-    includeFontPadding: false,
+    includeFontPadding: Platform.OS === 'android',
   };
 
   return (
     <View className="w-full items-center justify-center rounded-card bg-card px-3 py-8">
       <View
-        className="min-h-[140px] w-full items-center justify-center"
-        style={{ direction: 'rtl' }}
+        className="w-full items-center justify-center"
+        style={{ direction: 'rtl', minHeight: minDisplayHeight, overflow: 'visible' }}
         accessibilityRole="text"
         accessibilityLabel={`Arabisch: ${arabic}`}
       >
