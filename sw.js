@@ -1,4 +1,4 @@
-const SW_VERSION = '2026-03-24-v2';
+const SW_VERSION = '2026-09-19-v3';
 const STATIC_CACHE = `elifba-static-${SW_VERSION}`;
 const RUNTIME_CACHE = `elifba-runtime-${SW_VERSION}`;
 
@@ -29,6 +29,12 @@ self.addEventListener('install', (event) => {
       .then((cache) => cache.addAll(CORE_ASSETS))
       .then(() => self.skipWaiting())
   );
+});
+
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
 
 self.addEventListener('activate', (event) => {
