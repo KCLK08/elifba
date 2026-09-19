@@ -9,28 +9,82 @@
   <meta name="apple-mobile-web-app-title" content="Elifba" />
   <link rel="manifest" href="../../../../../manifest.webmanifest" />
   <link rel="apple-touch-icon" href="../../../../../icons/icon-180.png" />
-  <title>4.1 Das Dehnungs-Elif Übungen</title>
+  <title>4.1.2 Übungen mit Dehnungs-Elif</title>
   <link rel="stylesheet" href="../../../../../css/style.css" />
 </head>
 <body>
   <main class="page">
     <nav class="nav">
       <a href="../dehnungs-elif.html">Zurück</a>
+      <button id="btn-help" class="nav-help" type="button">Hilfe</button>
     </nav>
 
     <header class="header">
-      <h1>4.1 Das Dehnungs-Elif Übungen</h1>
-      <p>Inhalt folgt.</p>
+      <h1>4.1.2 Übungen mit Dehnungs-Elif</h1>
+      <p>Wörter mit Dehnungs-Elif.</p>
     </header>
 
-    <div id="progress-overview" class="progress-overview"></div>
+    <section class="card trainer-card">
+      <div id="progress-bar" class="progress-bar"></div>
+      <div class="progress-row" aria-hidden="true"></div>
 
-    <section class="card">
-      <p>Hier wird die Übung später eingefügt.</p>
+      <div id="current-letter" class="letter-display">مَاتَ</div>
+
+      <div class="trainer-buttons">
+        <button id="btn-audio" class="listen" type="button">Anhören</button>
+        <button id="btn-correct" class="correct" type="button">Richtig</button>
+        <button id="btn-unsure" class="unsure" type="button">Unsicher</button>
+        <button id="btn-wrong" class="wrong" type="button">Falsch</button>
+      </div>
+
+      <div id="completion" class="completion">Super! Alle Aufgaben sind gelernt.</div>
     </section>
   </main>
-  <script id="progress-meta" type="application/json">{"chapter": "elifba", "lesson": "4", "section": "l4-a1", "exercise": "k1-l4-a1-ue2", "scope": "exercise"}</script>
-  <script src="../../../../../js/progress.js"></script>
+
+  <script id="letter-data" type="application/json">
+{
+  "audioBase": "",
+  "nextUrl": "../../abschnitt-2/uebung-1/erklaerung.html",
+  "homeUrl": "../../../../../index.html",
+  "letters": [
+    "مَاتَ",
+    "جَابَ",
+    "قَالَ",
+    "بَاعَ",
+    "كَالَ",
+    "رَادَ",
+    "وَمَا",
+    "زَادَ",
+    "مَاذَا",
+    "كَانَ",
+    "قَاتَلَ",
+    "كَانَتَا",
+    "جَاوَزَ",
+    "مَا قَالَ",
+    "بَاعَدَ",
+    "حَافَظَ",
+    "اَذَابَ",
+    "اَرَادَ",
+    "بَارَكَ",
+    "اَجَابَ",
+    "تَجَاهَدَ",
+    "تَبَاعَدَ",
+    "تَبَارَكَ",
+    "مَتَاعُ",
+    "مَا قَامَ",
+    "مَا كَانَ",
+    "كَاتَبَ",
+    "قِيَامَ",
+    "مَاذَا قَالَ",
+    "بَارَكَ"
+  ],
+  "progressId": "k1-l4-a1-ue2",
+  "hideProgressBar": false
+}
+  </script>
+
+  <script src="../../../../../js/beta-feedback.js"></script>
+  <script src="../../../../../js/letter-trainer.js"></script>
   <script src="../../../../../js/pwa-register.js"></script>
 </body>
 </html>
