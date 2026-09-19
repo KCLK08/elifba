@@ -18,7 +18,6 @@ export const lesson3: ContentLesson = {
     'k1-l3-a3-ue1',
     'k1-l3-a3-ue2',
     'k1-l3-a3-ue3',
-    'k1-l3-a3-ue4',
   ],
   sections: [
     {
@@ -51,7 +50,6 @@ export const lesson3: ContentLesson = {
         'k1-l3-a3-ue1',
         'k1-l3-a3-ue2',
         'k1-l3-a3-ue3',
-        'k1-l3-a3-ue4',
       ],
     },
   ],
