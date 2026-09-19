@@ -10,6 +10,14 @@
   --hero-ink: #16130f;
   --hero-accent: #b44d2a;
   --glow: rgba(31, 111, 91, 0.16);
+  /* App-aligned progress tokens (Elifba Kids) */
+  --app-primary: #0f766e;
+  --app-primary-soft: #ccfbf1;
+  --status-unbeantwortet: #e5e7eb;
+  --status-falsch: #f87171;
+  --status-unsicher: #fbbf24;
+  --status-richtig: #86efac;
+  --status-gelernt: #15803d;
 }
 
 * {
@@ -379,16 +387,16 @@ body {
 }
 
 .overview-bar {
-  background: #efe9e1;
+  background: var(--app-primary-soft);
   border-radius: 999px;
-  height: 8px;
+  height: 14px;
   overflow: hidden;
 }
 
 .overview-bar span {
   display: block;
   height: 100%;
-  background: linear-gradient(90deg, #1f6f5b, #3a9f82);
+  background: var(--app-primary);
   border-radius: 999px;
 }
 
@@ -421,16 +429,17 @@ body {
 }
 
 .tile-bar {
-  background: #efe9e1;
+  background: var(--app-primary-soft);
   border-radius: 999px;
-  height: 8px;
+  height: 14px;
   overflow: hidden;
 }
 
 .tile-bar span {
   display: block;
   height: 100%;
-  background: linear-gradient(90deg, #1f6f5b, #3a9f82);
+  background: var(--app-primary);
+  border-radius: 999px;
 }
 
 .overview-card.dashboard {
@@ -811,84 +820,49 @@ body {
 
 .progress-bar {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0;
-  flex-wrap: nowrap;
-  overflow: hidden;
+  flex-direction: column;
+  align-items: stretch;
   width: 100%;
+  gap: 4px;
+  margin-bottom: 8px;
 }
 
-.progress-group {
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 0;
+.progress-track {
+  width: 100%;
+  min-height: 14px;
   padding: 2px;
   border-radius: 999px;
-  background: #efe9e1;
-  border: 3px solid transparent;
-  box-sizing: border-box;
-  height: 24px;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.02);
-  max-width: 100%;
+  background: var(--app-primary-soft);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
 }
 
-.progress-group.queue.with-learned {
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-  border-right: 0;
-}
-
-.progress-group.learned {
-  padding: 0;
-  background: #1f6f5b;
-  border: 3px solid transparent;
+.progress-track-inner {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  width: 100%;
+  height: 10px;
   border-radius: 999px;
-  box-shadow: 0 6px 14px var(--glow);
-}
-
-.progress-group.learned .progress-seg {
-  border-radius: 0;
-  background: transparent;
-}
-
-.progress-group.learned .progress-seg:first-child {
-  border-top-left-radius: 999px;
-  border-bottom-left-radius: 999px;
-}
-
-.progress-group.learned .progress-seg:last-child {
-  border-top-right-radius: 999px;
-  border-bottom-right-radius: 999px;
-}
-
-.progress-group.queue .progress-seg:first-child {
-  border-top-left-radius: 999px;
-  border-bottom-left-radius: 999px;
-}
-
-.progress-group.queue .progress-seg:last-child {
-  border-top-right-radius: 999px;
-  border-bottom-right-radius: 999px;
-}
-
-.progress-group.learned.with-queue .progress-seg:first-child {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
+  overflow: hidden;
+  gap: 2px;
 }
 
 .progress-seg {
-  width: 14px;
+  flex: 1;
+  min-width: 0;
   height: 100%;
-  border-radius: 0;
-  background: transparent;
+  border-radius: 2px;
+  background: var(--status-unbeantwortet);
   display: block;
 }
 
-.progress-seg.green { background: #6cbf9a; }
-.progress-seg.yellow { background: #f2c66d; }
-.progress-seg.red { background: #e58b7a; }
-.progress-seg.learned { background: #1f6f5b; }
+.progress-seg.unbeantwortet { background: var(--status-unbeantwortet); }
+.progress-seg.falsch { background: var(--status-falsch); }
+.progress-seg.unsicher { background: var(--status-unsicher); }
+.progress-seg.richtig { background: var(--status-richtig); }
+.progress-seg.gelernt { background: var(--status-gelernt); }
 .progress-seg.current { outline: 0; }
 
 .progress-row {
@@ -1086,10 +1060,10 @@ body {
   flex-shrink: 0;
 }
 
-.help-color.green { background: #6cbf9a; }
-.help-color.red { background: #e58b7a; }
-.help-color.yellow { background: #f2c66d; color: #4a3a1e; }
-.help-color.dark-green { background: #1f6f5b; }
+.help-color.green { background: var(--status-richtig); color: #134e4a; }
+.help-color.red { background: var(--status-falsch); }
+.help-color.yellow { background: var(--status-unsicher); color: #4a3a1e; }
+.help-color.dark-green { background: var(--status-gelernt); }
 
 .help-grid {
   display: grid;
@@ -1116,19 +1090,18 @@ body {
 .mini-bar {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
-  padding: 3px 6px;
+  gap: 2px;
+  padding: 2px;
   border-radius: 999px;
-  background: #efe9e1;
-  border: 2px solid #d9cfc4;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.03);
+  background: var(--app-primary-soft);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.02);
 }
 
 .mini-seg {
   width: 14px;
-  height: 12px;
-  border-radius: 999px;
-  background: #e2dbd1;
+  height: 10px;
+  border-radius: 2px;
+  background: var(--status-unbeantwortet);
 }
 
 .mini-dots {
@@ -1142,10 +1115,10 @@ body {
   width: 10px;
 }
 
-.mini-seg.green { background: #6cbf9a; }
-.mini-seg.red { background: #e58b7a; }
-.mini-seg.yellow { background: #f2c66d; }
-.mini-seg.dark-green { background: #1f6f5b; }
+.mini-seg.green { background: var(--status-richtig); }
+.mini-seg.red { background: var(--status-falsch); }
+.mini-seg.yellow { background: var(--status-unsicher); }
+.mini-seg.dark-green { background: var(--status-gelernt); }
 
 .modal-actions {
   display: grid;
@@ -1394,9 +1367,8 @@ body {
     font-size: 14px;
   }
 
-  .progress-seg {
-    width: 8px;
-    height: 12px;
+  .progress-track-inner {
+    height: 8px;
   }
 
   .audio-cell {
