@@ -55,7 +55,7 @@ export const k1_l3_a3_ue3: ContentExercise = {
   },
   {
     id: "k1-l3-a3-ue3-card-7",
-    arabic: "حُمِرَ",
+    arabic: "حَمُرَ",
     audioId: "k1-l3-a3-ue3-7",
     sourcePage: 23,
     tags: [],
