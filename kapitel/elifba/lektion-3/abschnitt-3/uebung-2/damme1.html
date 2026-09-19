@@ -16,44 +16,123 @@
   <main class="page">
     <nav class="nav">
       <a href="../damme.html">Zurück</a>
+      <button id="btn-help" class="nav-help" type="button">Hilfe</button>
     </nav>
 
-<header class="header">
+    <header class="header">
       <h1>3.3.2 Die Buchstaben mit Damme</h1>
-      <p>Audio-Dateien liegen in <code>audio/</code> (z. B. <code>k1_l3_s3_e1_01.mp3</code>).</p>
+      <p>Einzelne Buchstaben mit Damme.</p>
     </header>
 
-    <div id="progress-overview" class="progress-overview"></div>
+    <section class="card trainer-card">
+      <div id="progress-bar" class="progress-bar"></div>
+      <div class="progress-row" aria-hidden="true"></div>
 
+      <div id="current-letter" class="letter-display">اُ ءُ</div>
 
-    <section class="card">
-      <div class="exercise-grid">
-        <button class="audio-cell" data-audio="../../../../../audio/k1_l3_s3_e1_01.mp3">
-          <span class="glyph">اُ</span>
-          <span class="name">u</span>
-        </button>
-        <button class="audio-cell" data-audio="../../../../../audio/k1_l3_s3_e1_02.mp3">
-          <span class="glyph">بُ</span>
-          <span class="name">bu</span>
-        </button>
-        <button class="audio-cell" data-audio="../../../../../audio/k1_l3_s3_e1_03.mp3">
-          <span class="glyph">تُ</span>
-          <span class="name">tu</span>
-        </button>
-        <button class="audio-cell" data-audio="../../../../../audio/k1_l3_s3_e1_04.mp3">
-          <span class="glyph">ثُ</span>
-          <span class="name">thu</span>
-        </button>
-        <button class="audio-cell" data-audio="../../../../../audio/k1_l3_s3_e1_05.mp3">
-          <span class="glyph">جُ</span>
-          <span class="name">ju</span>
-        </button>
+      <div class="trainer-buttons">
+        <button id="btn-audio" class="listen" type="button">Anhören</button>
+        <button id="btn-correct" class="correct" type="button">Richtig</button>
+        <button id="btn-unsure" class="unsure" type="button">Unsicher</button>
+        <button id="btn-wrong" class="wrong" type="button">Falsch</button>
       </div>
+
+      <div id="completion" class="completion">Super! Alle Buchstaben sind gelernt.</div>
     </section>
   </main>
-  <script src="../../../../../js/app.js"></script>
-  <script id="progress-meta" type="application/json">{"chapter": "elifba", "lesson": "3", "section": "l3-a3", "exercise": "k1-l3-a3-ue2", "scope": "exercise"}</script>
-  <script src="../../../../../js/progress.js"></script>
+
+  <script id="letter-data" type="application/json">
+{
+  "audioBase": "../../../../../audio/kapitel-1/lektion-3/abschnitt-3/uebung-2/K1.L3.A3.UE2.Audio",
+  "nextUrl": "../uebung-3/damme2.html",
+  "homeUrl": "../../../../../index.html",
+  "letters": [
+    "اُ ءُ",
+    "بُ",
+    "تُ",
+    "ثُ",
+    "جُ",
+    "حُ",
+    "خُ",
+    "دُ",
+    "ذُ",
+    "رُ",
+    "زُ",
+    "سُ",
+    "شُ",
+    "صُ",
+    "ضُ",
+    "طُ",
+    "ظُ",
+    "عُ",
+    "غُ",
+    "فُ",
+    "قُ",
+    "كُ",
+    "لُ",
+    "مُ",
+    "نُ",
+    "وُ",
+    "هـُ هُ",
+    "ىُ"
+  ],
+  "targets": [
+    "َ",
+    "َ",
+    "َ",
+    "َ",
+    "َ",
+    "َ",
+    [
+      "َ",
+      "خ"
+    ],
+    "َ",
+    "َ",
+    "َ",
+    "َ",
+    "َ",
+    "َ",
+    [
+      "َ",
+      "ص"
+    ],
+    [
+      "َ",
+      "ض"
+    ],
+    [
+      "َ",
+      "ط"
+    ],
+    [
+      "َ",
+      "ظ"
+    ],
+    "َ",
+    [
+      "َ",
+      "غ"
+    ],
+    "َ",
+    [
+      "َ",
+      "ق"
+    ],
+    "َ",
+    "َ",
+    "َ",
+    "َ",
+    "َ",
+    "َ",
+    "َ"
+  ],
+  "progressId": "k1-l3-a3-ue2",
+  "hideProgressBar": false
+}
+  </script>
+
+  <script src="../../../../../js/letter-trainer.js"></script>
   <script src="../../../../../js/pwa-register.js"></script>
 </body>
 </html>

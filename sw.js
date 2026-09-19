@@ -1,4 +1,4 @@
-const SW_VERSION = '2026-09-19-v3';
+const SW_VERSION = '2026-09-19-damme';
 const STATIC_CACHE = `elifba-static-${SW_VERSION}`;
 const RUNTIME_CACHE = `elifba-runtime-${SW_VERSION}`;
 

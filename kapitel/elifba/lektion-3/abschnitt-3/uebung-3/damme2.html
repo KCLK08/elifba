@@ -16,44 +16,550 @@
   <main class="page">
     <nav class="nav">
       <a href="../damme.html">Zurück</a>
+      <button id="btn-help" class="nav-help" type="button">Hilfe</button>
     </nav>
 
-<header class="header">
+    <header class="header">
       <h1>3.3.3 Buchstabengruppen mit Damme</h1>
-      <p>Audio-Dateien liegen in <code>audio/</code> (z. B. <code>k1_l3_s3_e2_01.mp3</code>).</p>
+      <p>Wortgruppen mit Damme.</p>
     </header>
 
-    <div id="progress-overview" class="progress-overview"></div>
+    <section class="card trainer-card">
+      <div id="progress-bar" class="progress-bar"></div>
+      <div class="progress-row" aria-hidden="true"></div>
 
+      <div id="current-letter" class="letter-display">كُتِبَ</div>
 
-    <section class="card">
-      <div class="exercise-grid">
-        <button class="audio-cell" data-audio="../../../../../audio/k1_l3_s3_e2_01.mp3">
-          <span class="glyph">حُ</span>
-          <span class="name">hu</span>
-        </button>
-        <button class="audio-cell" data-audio="../../../../../audio/k1_l3_s3_e2_02.mp3">
-          <span class="glyph">خُ</span>
-          <span class="name">khu</span>
-        </button>
-        <button class="audio-cell" data-audio="../../../../../audio/k1_l3_s3_e2_03.mp3">
-          <span class="glyph">دُ</span>
-          <span class="name">du</span>
-        </button>
-        <button class="audio-cell" data-audio="../../../../../audio/k1_l3_s3_e2_04.mp3">
-          <span class="glyph">ذُ</span>
-          <span class="name">dhu</span>
-        </button>
-        <button class="audio-cell" data-audio="../../../../../audio/k1_l3_s3_e2_05.mp3">
-          <span class="glyph">رُ</span>
-          <span class="name">ru</span>
-        </button>
+      <div class="trainer-buttons">
+        <button id="btn-audio" class="listen" type="button">Anhören</button>
+        <button id="btn-correct" class="correct" type="button">Richtig</button>
+        <button id="btn-unsure" class="unsure" type="button">Unsicher</button>
+        <button id="btn-wrong" class="wrong" type="button">Falsch</button>
       </div>
+
+      <div id="completion" class="completion">Super! Alle Aufgaben sind gelernt.</div>
     </section>
   </main>
-  <script src="../../../../../js/app.js"></script>
-  <script id="progress-meta" type="application/json">{"chapter": "elifba", "lesson": "3", "section": "l3-a3", "exercise": "k1-l3-a3-ue3", "scope": "exercise"}</script>
-  <script src="../../../../../js/progress.js"></script>
+
+  <script id="letter-data" type="application/json">
+{
+  "audioBase": "../../../../../audio/kapitel-1/lektion-3/abschnitt-3/uebung-3/K1.L3.A3.UE3.Audio",
+  "nextUrl": "../uebung-4/damme3.html",
+  "homeUrl": "../../../../../index.html",
+  "letters": [
+    "كُتِبَ",
+    "شُرِبَ",
+    "زُرِعَ",
+    "رُزِقَ",
+    "ذُكِرَ",
+    "عُلِمَ",
+    "حُمِرَ",
+    "اُجِرَ",
+    "عَظُمَ",
+    "حَسُنَ",
+    "نُشِرَ",
+    "تُرِكَ",
+    "كَبُرَ",
+    "حُمِرَ",
+    "شُكِرَ",
+    "وُزِنَ",
+    "وُضِعَ",
+    "اُمِرَ",
+    "قَرُبَ",
+    "صَبُرَ",
+    "يَصِفُ",
+    "اُذِنَ",
+    "جُمِعَ",
+    "ضَعُفَ",
+    "كَمُلَ",
+    "عَشُبَ",
+    "يَقِفُ",
+    "كَرُمَ",
+    "كَثُرَ",
+    "اُزِفَ",
+    "هُدِبَ",
+    "اُخِذَ",
+    "حَرُمَ",
+    "وَهُوَ",
+    "فَهُوَ",
+    "بَعُدَ",
+    "عَضُرَ",
+    "خُرِجَ",
+    "هُدِيَ",
+    "ضُرِبَ",
+    "كَبُرَ",
+    "كَسُلَ"
+  ],
+  "targets": [
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ],
+    [
+      "ُ",
+      "َ",
+      "ط",
+      "ض",
+      "ق",
+      "ص",
+      "غ",
+      "ظ",
+      "خ"
+    ]
+  ],
+  "progressId": "k1-l3-a3-ue3",
+  "hideProgressBar": false
+}
+  </script>
+
+  <script src="../../../../../js/letter-trainer.js"></script>
   <script src="../../../../../js/pwa-register.js"></script>
 </body>
 </html>
