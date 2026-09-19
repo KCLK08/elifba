@@ -865,6 +865,129 @@ body {
 .progress-seg.gelernt { background: var(--status-gelernt); }
 .progress-seg.current { outline: 0; }
 
+.progress-seg.marked {
+  box-shadow: inset 0 0 0 2px #f97316;
+}
+
+.beta-feedback {
+  margin: 8px 0 12px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid #f97316;
+  background: #ffedd5;
+}
+
+.beta-feedback-label {
+  margin: 0 0 8px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.beta-feedback-primary {
+  width: 100%;
+  min-height: 52px;
+  border: 0;
+  border-radius: 999px;
+  background: #f97316;
+  color: var(--ink);
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.beta-feedback-primary:hover {
+  opacity: 0.92;
+}
+
+.beta-feedback-hint {
+  margin: 8px 0 0;
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.beta-feedback-link {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--app-primary, #0f766e);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.letter-display.beta-marked {
+  border-color: #f97316;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.25);
+}
+
+.beta-marked-note {
+  margin: 6px 0 0;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #f97316;
+}
+
+.beta-note-label {
+  display: block;
+  margin: 0 0 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.beta-note-input {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  font: inherit;
+  resize: vertical;
+}
+
+.beta-report-preview {
+  max-height: 16rem;
+  overflow: auto;
+  margin: 0 0 12px;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--bg);
+  font-size: 12px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.beta-report-status {
+  margin: 0 0 12px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.beta-report-status.success {
+  color: #15803d;
+}
+
+.beta-report-status.error {
+  color: #dc2626;
+}
+
+.modal-btn.danger {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #991b1b;
+}
+
 .progress-row {
   display: flex;
   justify-content: center;

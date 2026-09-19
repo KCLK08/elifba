@@ -1,4 +1,18 @@
 (function () {
+  if (!window.createElifbaBetaFeedback && document.currentScript) {
+    try {
+      const betaUrl = document.currentScript.src.replace(/letter-trainer\.js(?:\?.*)?$/, "beta-feedback.js");
+      const xhr = new XMLHttpRequest();
+      xhr.open("GET", betaUrl, false);
+      xhr.send(null);
+      if (xhr.status >= 200 && xhr.status < 300) {
+        (0, Function)(xhr.responseText)();
+      }
+    } catch (err) {
+      console.warn("Betatest-Modul konnte nicht geladen werden.", err);
+    }
+  }
+
   const dataEl = document.getElementById("letter-data");
   if (!dataEl) return;
 
@@ -329,6 +343,20 @@
   let completedModalEl = null;
   let batchModalEl = null;
   let repeatCompleteModalEl = null;
+  const beta = window.createElifbaBetaFeedback ? window.createElifbaBetaFeedback({
+    progressId,
+    isRepeatMode: () => isRepeatMode,
+    getCurrentIdx: () => (state.queue.length ? state.queue[0] : null),
+    getArabic: (idx) => letters[idx] ?? "",
+    onChange: () => {
+      if (beta) beta.refreshControls();
+      if (state.queue.length) {
+        renderWord(state.queue[0]);
+        if (beta) beta.refreshLetterState(letterEl, state.queue[0]);
+      }
+      updateProgress();
+    }
+  }) : null;
   let baselineProgress = null;
   let repeatBatchOnly = false;
   let loadedCompleted = false;
@@ -571,6 +599,7 @@
     let pendingMode = mode;
     let pendingLimit = cardLimit;
     let pendingInclude = includeLearned;
+    let pendingBetaTest = beta ? beta.getBetaTestMode() : false;
     const currentLabel = mode === "shuffle" ? "Zufällig" : "Reihenfolge";
     const limitLabel = cardLimit === "all" ? "Alle" : `${cardLimit}`;
     const includeLabel = includeLearned ? "anzeigen" : "ausblenden";
@@ -611,6 +640,18 @@
           <button class="modal-btn ghost option-btn" type="button" data-action="limit" data-value="all">Alle</button>
         </div>
       </div>
+      ${beta ? `
+      <div class="modal-group">
+        <div class="modal-subtitle-row">
+          <p class="modal-subtitle">Betatest</p>
+          <span class="info-tip" tabindex="0" data-tooltip="Karten mit Fehlern markieren und am Ende einen Report an das Entwicklungsteam senden.">i</span>
+        </div>
+        <div class="modal-inline">
+          <button class="modal-btn ghost option-btn" type="button" data-action="beta" data-value="true">An</button>
+          <button class="modal-btn ghost option-btn" type="button" data-action="beta" data-value="false">Aus</button>
+        </div>
+      </div>
+      ` : ""}
       <div class="modal-actions-row">
         <button class="modal-btn ghost" type="button" data-action="stay">Schließen</button>
         <button class="modal-btn primary" type="button" data-action="apply">Anwenden</button>
@@ -667,6 +708,9 @@
       overlay.querySelectorAll("[data-action=\"include\"]").forEach((btn) => {
         btn.classList.toggle("active", btn.getAttribute("data-value") === String(pendingInclude));
       });
+      overlay.querySelectorAll("[data-action=\"beta\"]").forEach((btn) => {
+        btn.classList.toggle("active", btn.getAttribute("data-value") === String(pendingBetaTest));
+      });
       updateWarning();
     }
 
@@ -692,10 +736,33 @@
       });
     });
 
+    overlay.querySelectorAll("[data-action=\"beta\"]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        pendingBetaTest = btn.getAttribute("data-value") === "true";
+        updateActive();
+      });
+    });
+
+    overlay.__syncPending = () => {
+      pendingMode = mode;
+      pendingLimit = cardLimit;
+      pendingInclude = includeLearned;
+      pendingBetaTest = beta ? beta.getBetaTestMode() : false;
+      updateActive();
+    };
+
     overlay.querySelector('[data-action="apply"]').addEventListener("click", () => {
       const modeChanged = pendingMode !== mode;
       const limitChanged = String(pendingLimit) !== String(cardLimit);
       const includeChanged = pendingInclude !== includeLearned;
+      const betaChanged = beta && pendingBetaTest !== beta.getBetaTestMode();
+      if (!modeChanged && !limitChanged && !includeChanged && !betaChanged) {
+        overlay.classList.remove("visible");
+        return;
+      }
+      if (betaChanged) {
+        beta.setBetaTestMode(pendingBetaTest);
+      }
       if (!modeChanged && !limitChanged && !includeChanged) {
         overlay.classList.remove("visible");
         return;
@@ -1155,7 +1222,8 @@
       ? order.map((idx) => {
         const st = statusClassFor(state.stats[idx]?.status);
         const current = state.queue[0] === idx ? " current" : "";
-        return `<span class="progress-seg ${st}${current}"></span>`;
+        const marked = beta ? beta.progressSegClass(idx) : "";
+        return `<span class="progress-seg ${st}${current}${marked}"></span>`;
       }).join("")
       : '<span class="progress-seg unbeantwortet"></span>';
 
@@ -1386,6 +1454,10 @@
       return;
     }
     renderWord(state.queue[0]);
+    if (beta) {
+      beta.refreshControls();
+      beta.refreshLetterState(letterEl, state.queue[0]);
+    }
     const currentWord = letters[state.queue[0]] ?? "";
     if (currentWord) {
       localStorage.setItem(`elifba.lastPrompt.${progressId}`, currentWord);
@@ -1553,6 +1625,7 @@
   if (settingsBtn) {
     settingsBtn.addEventListener("click", () => {
       if (!settingsModalEl) settingsModalEl = buildSettingsModal();
+      if (settingsModalEl.__syncPending) settingsModalEl.__syncPending();
       settingsModalEl.classList.add("visible");
     });
   }
@@ -1575,5 +1648,6 @@
   }
   initBackGuard();
   if (hideProgressBar && barEl) barEl.style.display = "none";
+  if (beta) beta.refreshControls();
   showCurrent();
 })();
