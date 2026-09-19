@@ -16,21 +16,80 @@
   <main class="page">
     <nav class="nav">
       <a href="../lektion4.html">Zurück</a>
+      <button id="btn-help" class="nav-help" type="button">Hilfe</button>
     </nav>
 
     <header class="header">
       <h1>4.4 Übungen mit allen Dehnungsbuchstaben</h1>
-      <p>Inhalt folgt.</p>
+      <p>Wörter mit allen Dehnungsbuchstaben.</p>
     </header>
 
-    <div id="progress-overview" class="progress-overview"></div>
+    <section class="card trainer-card">
+      <div id="progress-bar" class="progress-bar"></div>
+      <div class="progress-row" aria-hidden="true"></div>
 
-    <section class="card">
-      <p>Hier wird die Übung später eingefügt.</p>
+      <div id="current-letter" class="letter-display">خَاسِرِينَ</div>
+
+      <div class="trainer-buttons">
+        <button id="btn-audio" class="listen" type="button">Anhören</button>
+        <button id="btn-correct" class="correct" type="button">Richtig</button>
+        <button id="btn-unsure" class="unsure" type="button">Unsicher</button>
+        <button id="btn-wrong" class="wrong" type="button">Falsch</button>
+      </div>
+
+      <div id="completion" class="completion">Super! Alle Aufgaben sind gelernt.</div>
     </section>
   </main>
-  <script id="progress-meta" type="application/json">{"chapter": "elifba", "lesson": "4", "section": "l4-a4", "exercise": "k1-l4-a4", "scope": "exercise"}</script>
-  <script src="../../../../js/progress.js"></script>
+
+  <script id="letter-data" type="application/json">
+{
+  "audioBase": "../../../../audio/kapitel-1/lektion-4/abschnitt-4/K1.L4.A4.Audio",
+  "nextUrl": "../../lektion-5/abschnitt-1/erklaerung.html",
+  "homeUrl": "../../../../index.html",
+  "letters": [
+    "خَاسِرِينَ",
+    "عَابِدِينَ",
+    "غَافِلِينَ",
+    "كَاتِبِينَ",
+    "عَالِمُونَ",
+    "يُرِيدُونَ",
+    "لَا تَقُولُوا",
+    "يُبَايِعُونَكَ",
+    "تُطِيعُونَ",
+    "يَنَالُونَ",
+    "فَاعِلُونَ",
+    "رَاحِمِينَ",
+    "يُعِيدُونَ",
+    "جَاثِمِينَ",
+    "عَالِمِينَ",
+    "رَاسِخُونَ",
+    "صَادِقِينَ",
+    "يَقُولُونَ",
+    "بِعَالَمِينَ",
+    "عَارِفُونَ",
+    "قَالُوا",
+    "كُونُوا",
+    "قُولِي",
+    "صُورِي",
+    "قُومُوا",
+    "تُرِيدُونَ",
+    "اَمِرُونَ",
+    "مُنِيبِينَ",
+    "قُولُوا",
+    "حُورِي",
+    "تُوقِدُونَ",
+    "خَالِدُونَ",
+    "وَمَالَانِ",
+    "مَا يَقُولُونَ",
+    "سَاجِدُونَ"
+  ],
+  "progressId": "k1-l4-a4",
+  "hideProgressBar": false
+}
+  </script>
+
+  <script src="../../../../js/beta-feedback.js"></script>
+  <script src="../../../../js/letter-trainer.js"></script>
   <script src="../../../../js/pwa-register.js"></script>
 </body>
 </html>

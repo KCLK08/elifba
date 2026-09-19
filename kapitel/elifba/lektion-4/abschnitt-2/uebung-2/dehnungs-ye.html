@@ -9,28 +9,82 @@
   <meta name="apple-mobile-web-app-title" content="Elifba" />
   <link rel="manifest" href="../../../../../manifest.webmanifest" />
   <link rel="apple-touch-icon" href="../../../../../icons/icon-180.png" />
-  <title>4.2 Das Dehnungs-Ye Übungen</title>
+  <title>4.2.2 Übungen mit Dehnungs-Ye</title>
   <link rel="stylesheet" href="../../../../../css/style.css" />
 </head>
 <body>
   <main class="page">
     <nav class="nav">
       <a href="../dehnungs-ye.html">Zurück</a>
+      <button id="btn-help" class="nav-help" type="button">Hilfe</button>
     </nav>
 
     <header class="header">
-      <h1>4.2 Das Dehnungs-Ye Übungen</h1>
-      <p>Inhalt folgt.</p>
+      <h1>4.2.2 Übungen mit Dehnungs-Ye</h1>
+      <p>Wörter mit Dehnungs-Ye.</p>
     </header>
 
-    <div id="progress-overview" class="progress-overview"></div>
+    <section class="card trainer-card">
+      <div id="progress-bar" class="progress-bar"></div>
+      <div class="progress-row" aria-hidden="true"></div>
 
-    <section class="card">
-      <p>Hier wird die Übung später eingefügt.</p>
+      <div id="current-letter" class="letter-display">قٖيلَ</div>
+
+      <div class="trainer-buttons">
+        <button id="btn-audio" class="listen" type="button">Anhören</button>
+        <button id="btn-correct" class="correct" type="button">Richtig</button>
+        <button id="btn-unsure" class="unsure" type="button">Unsicher</button>
+        <button id="btn-wrong" class="wrong" type="button">Falsch</button>
+      </div>
+
+      <div id="completion" class="completion">Super! Alle Aufgaben sind gelernt.</div>
     </section>
   </main>
-  <script id="progress-meta" type="application/json">{"chapter": "elifba", "lesson": "4", "section": "l4-a2", "exercise": "k1-l4-a2-ue2", "scope": "exercise"}</script>
-  <script src="../../../../../js/progress.js"></script>
+
+  <script id="letter-data" type="application/json">
+{
+  "audioBase": "../../../../../audio/kapitel-1/lektion-4/abschnitt-2/uebung-2/K1.L4.A2.UE2.Audio",
+  "nextUrl": "../../abschnitt-3/uebung-1/erklaerung.html",
+  "homeUrl": "../../../../../index.html",
+  "letters": [
+    "قٖيلَ",
+    "كٖيلَ",
+    "زٖيلَ",
+    "نٖيلَ",
+    "اَبٖى",
+    "لَفٖى",
+    "رَاجٖى",
+    "وَافٖى",
+    "نَاجٖى",
+    "كَافٖى",
+    "غَازٖى",
+    "جَارٖى",
+    "يَتٖيمَ",
+    "نَعٖيمَ",
+    "عَظٖيمَ",
+    "جَحٖيمَ",
+    "يُجٖيبُ",
+    "خٖيفَ",
+    "صَابِرٖينَ",
+    "اَبَابٖيلَ",
+    "دٖينِ",
+    "تُجٖيبُ",
+    "رَاكِعٖينَ",
+    "يُقٖيمُ",
+    "نَكٖيرِ",
+    "اَبَارٖيقَ",
+    "دٖينُكَ",
+    "مُنٖيرُ",
+    "رَحٖيمَ",
+    "مُبٖينِ"
+  ],
+  "progressId": "k1-l4-a2-ue2",
+  "hideProgressBar": false
+}
+  </script>
+
+  <script src="../../../../../js/beta-feedback.js"></script>
+  <script src="../../../../../js/letter-trainer.js"></script>
   <script src="../../../../../js/pwa-register.js"></script>
 </body>
 </html>
