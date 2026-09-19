@@ -16,44 +16,75 @@
   <main class="page">
     <nav class="nav">
       <a href="../damme.html">Zurück</a>
+      <button id="btn-help" class="nav-help" type="button">Hilfe</button>
     </nav>
 
-<header class="header">
+    <header class="header">
       <h1>3.3.4 Abschluss mit Damme</h1>
-      <p>Audio-Dateien liegen in <code>audio/</code> (z. B. <code>k1_l3_s3_e3_01.mp3</code>).</p>
+      <p>Abschlussübung mit Damme.</p>
     </header>
 
-    <div id="progress-overview" class="progress-overview"></div>
+    <section class="card trainer-card">
+      <div id="progress-bar" class="progress-bar"></div>
+      <div class="progress-row" aria-hidden="true"></div>
 
+      <div id="current-letter" class="letter-display">كُتِبَ</div>
 
-    <section class="card">
-      <div class="exercise-grid">
-        <button class="audio-cell" data-audio="../../../../../audio/k1_l3_s3_e3_01.mp3">
-          <span class="glyph">زُ</span>
-          <span class="name">zu</span>
-        </button>
-        <button class="audio-cell" data-audio="../../../../../audio/k1_l3_s3_e3_02.mp3">
-          <span class="glyph">سُ</span>
-          <span class="name">su</span>
-        </button>
-        <button class="audio-cell" data-audio="../../../../../audio/k1_l3_s3_e3_03.mp3">
-          <span class="glyph">شُ</span>
-          <span class="name">shu</span>
-        </button>
-        <button class="audio-cell" data-audio="../../../../../audio/k1_l3_s3_e3_04.mp3">
-          <span class="glyph">صُ</span>
-          <span class="name">sad</span>
-        </button>
-        <button class="audio-cell" data-audio="../../../../../audio/k1_l3_s3_e3_05.mp3">
-          <span class="glyph">ضُ</span>
-          <span class="name">dad</span>
-        </button>
+      <div class="trainer-buttons">
+        <button id="btn-audio" class="listen" type="button">Anhören</button>
+        <button id="btn-correct" class="correct" type="button">Richtig</button>
+        <button id="btn-unsure" class="unsure" type="button">Unsicher</button>
+        <button id="btn-wrong" class="wrong" type="button">Falsch</button>
       </div>
+
+      <div id="completion" class="completion">Super! Alle Aufgaben sind gelernt.</div>
     </section>
   </main>
-  <script src="../../../../../js/app.js"></script>
-  <script id="progress-meta" type="application/json">{"chapter": "elifba", "lesson": "3", "section": "l3-a3", "exercise": "k1-l3-a3-ue4", "scope": "exercise"}</script>
-  <script src="../../../../../js/progress.js"></script>
+
+  <script id="letter-data" type="application/json">
+{
+  "nextUrl": "../../../lektion-4/abschnitt-1/uebung-1/erklaerung.html",
+  "homeUrl": "../../../../../index.html",
+  "letters": [
+    "كُتِبَ",
+    "شُرِبَ",
+    "زُرِعَ",
+    "رُزِقَ",
+    "ذُكِرَ",
+    "عُلِمَ",
+    "حُمِدَ",
+    "نُزِلَ",
+    "فُتِحَ",
+    "بُشِرَ",
+    "قُضِيَ",
+    "صُلِحَ",
+    "عُمِرَ",
+    "كُبِرَ",
+    "حُسِنَ"
+  ],
+  "targets": [
+    "ُ",
+    "ُ",
+    "ُ",
+    "ُ",
+    "ُ",
+    "ُ",
+    "ُ",
+    "ُ",
+    "ُ",
+    "ُ",
+    "ُ",
+    "ُ",
+    "ُ",
+    "ُ",
+    "ُ"
+  ],
+  "progressId": "k1-l3-a3-ue4",
+  "hideProgressBar": false
+}
+  </script>
+
+  <script src="../../../../../js/letter-trainer.js"></script>
   <script src="../../../../../js/pwa-register.js"></script>
 </body>
 </html>
