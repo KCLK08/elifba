@@ -1,18 +1,4 @@
 (function () {
-  if (!window.createElifbaBetaFeedback && document.currentScript) {
-    try {
-      const betaUrl = document.currentScript.src.replace(/letter-trainer\.js(?:\?.*)?$/, "beta-feedback.js");
-      const xhr = new XMLHttpRequest();
-      xhr.open("GET", betaUrl, false);
-      xhr.send(null);
-      if (xhr.status >= 200 && xhr.status < 300) {
-        (0, Function)(xhr.responseText)();
-      }
-    } catch (err) {
-      console.warn("Betatest-Modul konnte nicht geladen werden.", err);
-    }
-  }
-
   const dataEl = document.getElementById("letter-data");
   if (!dataEl) return;
 
@@ -343,6 +329,7 @@
   let completedModalEl = null;
   let batchModalEl = null;
   let repeatCompleteModalEl = null;
+  const BETA_SETTINGS_KEY = "elifba.settings.betaTestMode";
   const beta = window.createElifbaBetaFeedback ? window.createElifbaBetaFeedback({
     progressId,
     isRepeatMode: () => isRepeatMode,
@@ -357,6 +344,19 @@
       updateProgress();
     }
   }) : null;
+
+  function getBetaTestMode() {
+    if (beta) return beta.getBetaTestMode();
+    return localStorage.getItem(BETA_SETTINGS_KEY) === "true";
+  }
+
+  function setBetaTestMode(enabled) {
+    if (beta) {
+      beta.setBetaTestMode(enabled);
+      return;
+    }
+    localStorage.setItem(BETA_SETTINGS_KEY, enabled ? "true" : "false");
+  }
   let baselineProgress = null;
   let repeatBatchOnly = false;
   let loadedCompleted = false;
@@ -599,7 +599,7 @@
     let pendingMode = mode;
     let pendingLimit = cardLimit;
     let pendingInclude = includeLearned;
-    let pendingBetaTest = beta ? beta.getBetaTestMode() : false;
+    let pendingBetaTest = getBetaTestMode();
     const currentLabel = mode === "shuffle" ? "Zufällig" : "Reihenfolge";
     const limitLabel = cardLimit === "all" ? "Alle" : `${cardLimit}`;
     const includeLabel = includeLearned ? "anzeigen" : "ausblenden";
@@ -640,7 +640,6 @@
           <button class="modal-btn ghost option-btn" type="button" data-action="limit" data-value="all">Alle</button>
         </div>
       </div>
-      ${beta ? `
       <div class="modal-group">
         <div class="modal-subtitle-row">
           <p class="modal-subtitle">Betatest</p>
@@ -651,7 +650,6 @@
           <button class="modal-btn ghost option-btn" type="button" data-action="beta" data-value="false">Aus</button>
         </div>
       </div>
-      ` : ""}
       <div class="modal-actions-row">
         <button class="modal-btn ghost" type="button" data-action="stay">Schließen</button>
         <button class="modal-btn primary" type="button" data-action="apply">Anwenden</button>
@@ -747,7 +745,7 @@
       pendingMode = mode;
       pendingLimit = cardLimit;
       pendingInclude = includeLearned;
-      pendingBetaTest = beta ? beta.getBetaTestMode() : false;
+      pendingBetaTest = getBetaTestMode();
       updateActive();
     };
 
@@ -755,13 +753,13 @@
       const modeChanged = pendingMode !== mode;
       const limitChanged = String(pendingLimit) !== String(cardLimit);
       const includeChanged = pendingInclude !== includeLearned;
-      const betaChanged = beta && pendingBetaTest !== beta.getBetaTestMode();
+      const betaChanged = pendingBetaTest !== getBetaTestMode();
       if (!modeChanged && !limitChanged && !includeChanged && !betaChanged) {
         overlay.classList.remove("visible");
         return;
       }
       if (betaChanged) {
-        beta.setBetaTestMode(pendingBetaTest);
+        setBetaTestMode(pendingBetaTest);
       }
       if (!modeChanged && !limitChanged && !includeChanged) {
         overlay.classList.remove("visible");
