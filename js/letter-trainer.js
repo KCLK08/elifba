@@ -1122,14 +1122,6 @@
     window.dispatchEvent(new Event("progress:update"));
   }
 
-  function starsEarnedFromProgress(progress) {
-    const clamped = Math.max(0, Math.min(100, progress));
-    if (clamped >= 100) return 3;
-    if (clamped >= 66) return 2;
-    if (clamped >= 33) return 1;
-    return 0;
-  }
-
   function buildSessionProgressBarOrder(sessionIndices, queue, stats) {
     const inQueue = new Set(queue);
     const learned = [];
@@ -1157,14 +1149,7 @@
     const order = buildSessionProgressBarOrder(barIndices, state.queue, state.stats);
     const starLearned = letters.filter((_, idx) => isLearned(idx)).length;
     const starTotal = letters.length;
-    const starPercent = starTotal ? Math.round((starLearned / starTotal) * 100) : 0;
-    const earnedStars = starsEarnedFromProgress(starPercent);
     const sessionLearned = barIndices.filter((idx) => state.stats[idx]?.status === "gelernt").length;
-
-    const starsHtml = [0, 1, 2].map((index) => {
-      const earned = index < earnedStars;
-      return `<span class="progress-star${earned ? " earned" : ""}" aria-hidden="true">${earned ? "⭐" : "☆"}</span>`;
-    }).join("");
 
     const segsHtml = order.length
       ? order.map((idx) => {
@@ -1175,7 +1160,6 @@
       : '<span class="progress-seg unbeantwortet"></span>';
 
     barEl.innerHTML = `
-      <div class="progress-stars" aria-label="${earnedStars} von 3 Sternen">${starsHtml}</div>
       <div class="progress-track" role="progressbar" aria-valuenow="${sessionLearned}" aria-valuemin="0" aria-valuemax="${barIndices.length}" aria-label="Session: ${sessionLearned} von ${barIndices.length} Karten · Gesamt gelernt ${starLearned} von ${starTotal}">
         <div class="progress-track-inner">${segsHtml}</div>
       </div>
