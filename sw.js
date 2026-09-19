@@ -1,4 +1,4 @@
-const SW_VERSION = '2026-09-19-dehnungs-elif-audio';
+const SW_VERSION = '2026-09-19-lektion-4';
 const STATIC_CACHE = `elifba-static-${SW_VERSION}`;
 const RUNTIME_CACHE = `elifba-runtime-${SW_VERSION}`;
 
