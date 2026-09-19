@@ -513,7 +513,7 @@
           <p>Jedes Segment steht für eine Lernkarte.</p>
           <div class="help-grid">
             <span class="help-color green">Grün</span>
-            <span class="help-desc">Richtig beantwortet und im Balken ganz rechts platziert.</span>
+            <span class="help-desc">Richtig beantwortet — wandert nach links, sobald die Karte gelernt ist.</span>
             <span class="help-visual">
               <span class="mini-bar">
                 <span class="mini-seg"></span>
@@ -553,16 +553,11 @@
             <span class="help-color dark-green">Dunkelgrün</span>
             <span class="help-desc">Gelernt. Normal nach 3 richtigen Antworten. Nach Gelb sind 4 richtige Antworten nötig, nach Rot 5 richtige Antworten.</span>
             <span class="help-visual">
-              <span class="mini-stack">
-                <span class="mini-bar">
-                  <span class="mini-seg red"></span>
-                  <span class="mini-seg yellow"></span>
-                  <span class="mini-seg green"></span>
-                  <span class="mini-seg green"></span>
-                </span>
-                <span class="mini-bar">
-                  <span class="mini-seg dark-green"></span>
-                </span>
+              <span class="mini-bar long">
+                <span class="mini-seg dark-green"></span>
+                <span class="mini-seg dark-green"></span>
+                <span class="mini-seg"></span>
+                <span class="mini-seg"></span>
               </span>
             </span>
           </div>
@@ -1127,41 +1122,64 @@
     window.dispatchEvent(new Event("progress:update"));
   }
 
+  function starsEarnedFromProgress(progress) {
+    const clamped = Math.max(0, Math.min(100, progress));
+    if (clamped >= 100) return 3;
+    if (clamped >= 66) return 2;
+    if (clamped >= 33) return 1;
+    return 0;
+  }
+
+  function buildSessionProgressBarOrder(sessionIndices, queue, stats) {
+    const inQueue = new Set(queue);
+    const learned = [];
+    const waiting = [];
+    sessionIndices.forEach((idx) => {
+      if (stats[idx]?.status === "gelernt") {
+        if (!inQueue.has(idx)) learned.push(idx);
+      } else if (!inQueue.has(idx)) {
+        waiting.push(idx);
+      }
+    });
+    return [...learned, ...queue, ...waiting];
+  }
+
+  function statusClassFor(status) {
+    if (status === "gelernt" || status === "richtig" || status === "unsicher" || status === "falsch") {
+      return status;
+    }
+    return "unbeantwortet";
+  }
+
   function renderProgressBar() {
     if (!barEl) return;
-    barEl.innerHTML = "";
     const barIndices = cardLimit === "all" ? letters.map((_, i) => i) : batchIndices;
-    const learnedOrder = barIndices.filter((idx) => state.stats[idx]?.status === "gelernt");
+    const order = buildSessionProgressBarOrder(barIndices, state.queue, state.stats);
+    const starLearned = letters.filter((_, idx) => isLearned(idx)).length;
+    const starTotal = letters.length;
+    const starPercent = starTotal ? Math.round((starLearned / starTotal) * 100) : 0;
+    const earnedStars = starsEarnedFromProgress(starPercent);
+    const sessionLearned = barIndices.filter((idx) => state.stats[idx]?.status === "gelernt").length;
 
-    if (state.queue.length) {
-      const queueGroup = document.createElement("div");
-      queueGroup.className = "progress-group queue";
-      if (learnedOrder.length) queueGroup.classList.add("with-learned");
+    const starsHtml = [0, 1, 2].map((index) => {
+      const earned = index < earnedStars;
+      return `<span class="progress-star${earned ? " earned" : ""}" aria-hidden="true">${earned ? "⭐" : "☆"}</span>`;
+    }).join("");
 
-      state.queue.forEach((idx) => {
-        const seg = document.createElement("span");
-        seg.className = "progress-seg";
-        const st = state.stats[idx].status;
-        if (st === "richtig") seg.classList.add("green");
-        else if (st === "unsicher") seg.classList.add("yellow");
-        else if (st === "falsch") seg.classList.add("red");
-        else if (st === "gelernt") seg.classList.add("learned");
-        if (state.queue[0] === idx) seg.classList.add("current");
-        queueGroup.appendChild(seg);
-      });
-      barEl.appendChild(queueGroup);
-    }
+    const segsHtml = order.length
+      ? order.map((idx) => {
+        const st = statusClassFor(state.stats[idx]?.status);
+        const current = state.queue[0] === idx ? " current" : "";
+        return `<span class="progress-seg ${st}${current}"></span>`;
+      }).join("")
+      : '<span class="progress-seg unbeantwortet"></span>';
 
-    const learnedGroup = document.createElement("div");
-    learnedGroup.className = "progress-group learned";
-    if (state.queue.length) learnedGroup.classList.add("with-queue");
-    learnedOrder.forEach((idx) => {
-      const seg = document.createElement("span");
-      seg.className = "progress-seg learned";
-      learnedGroup.appendChild(seg);
-    });
-
-    if (learnedOrder.length) barEl.appendChild(learnedGroup);
+    barEl.innerHTML = `
+      <div class="progress-stars" aria-label="${earnedStars} von 3 Sternen">${starsHtml}</div>
+      <div class="progress-track" role="progressbar" aria-valuenow="${sessionLearned}" aria-valuemin="0" aria-valuemax="${barIndices.length}" aria-label="Session: ${sessionLearned} von ${barIndices.length} Karten · Gesamt gelernt ${starLearned} von ${starTotal}">
+        <div class="progress-track-inner">${segsHtml}</div>
+      </div>
+    `;
   }
 
   function updateProgress() {
