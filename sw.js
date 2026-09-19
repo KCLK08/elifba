@@ -1,4 +1,4 @@
-const SW_VERSION = '2026-09-19-damme';
+const SW_VERSION = '2026-09-19-betatest';
 const STATIC_CACHE = `elifba-static-${SW_VERSION}`;
 const RUNTIME_CACHE = `elifba-runtime-${SW_VERSION}`;
 
@@ -12,6 +12,7 @@ const CORE_ASSETS = [
   './js/dashboard.js',
   './js/exercise-list-progress.js',
   './js/letter-trainer.js',
+  './js/beta-feedback.js',
   './js/progress.js',
   './js/reset-progress.js',
   './js/start.js',
