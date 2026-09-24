@@ -16,21 +16,72 @@
   <main class="page">
     <nav class="nav">
       <a href="../lektion5.html">Zurück</a>
+      <button id="btn-help" class="nav-help" type="button">Hilfe</button>
     </nav>
 
     <header class="header">
       <h1>5.2 Das Dschezm mit einzelnen Buchstaben</h1>
-      <p>Inhalt folgt.</p>
+      <p>Einzelne Buchstaben mit Dschezm.</p>
     </header>
 
-    <div id="progress-overview" class="progress-overview"></div>
+    <section class="card trainer-card">
+      <div id="progress-bar" class="progress-bar"></div>
+      <div class="progress-row" aria-hidden="true"></div>
 
-    <section class="card">
-      <p>Hier wird die Übung später eingefügt.</p>
+      <div id="current-letter" class="letter-display">اَبْ اِبْ اُبْ</div>
+
+      <div class="trainer-buttons">
+        <button id="btn-audio" class="listen" type="button">Anhören</button>
+        <button id="btn-correct" class="correct" type="button">Richtig</button>
+        <button id="btn-unsure" class="unsure" type="button">Unsicher</button>
+        <button id="btn-wrong" class="wrong" type="button">Falsch</button>
+      </div>
+
+      <div id="completion" class="completion">Super! Alle Aufgaben sind gelernt.</div>
     </section>
   </main>
-  <script id="progress-meta" type="application/json">{"chapter": "elifba", "lesson": "5", "section": "l5-a2", "exercise": "k1-l5-a2", "scope": "exercise"}</script>
-  <script src="../../../../js/progress.js"></script>
+
+  <script id="letter-data" type="application/json">
+{
+  "audioBase": "../../../../audio/kapitel-1/lektion-5/abschnitt-2/K1.L5.A2.Audio",
+  "nextUrl": "../abschnitt-3/dschemz-gruppen.html",
+  "homeUrl": "../../../../index.html",
+  "letters": [
+    "اَبْ اِبْ اُبْ",
+    "اَتْ اِتْ اُتْ",
+    "اَثْ اِثْ اُثْ",
+    "اَجْ اِجْ اُجْ",
+    "اَحْ اِحْ اُحْ",
+    "اَخْ اِخْ اُخْ",
+    "اَدْ اِدْ اُدْ",
+    "اَذْ اِذْ اُذْ",
+    "اَرْ اِرْ اُرْ",
+    "اَزْ اِزْ اُزْ",
+    "اَسْ اِسْ اُسْ",
+    "اَشْ اِشْ اُشْ",
+    "اَصْ اِصْ اُصْ",
+    "اَضْ اِضْ اُضْ",
+    "اَطْ اِطْ اُطْ",
+    "اَظْ اِظْ اُظْ",
+    "اَعْ اِعْ اُعْ",
+    "اَغْ اِغْ اُغْ",
+    "اَفْ اِفْ اُفْ",
+    "اَقْ اِقْ اُقْ",
+    "اَكْ اِكْ اُكْ",
+    "اَلْ اِلْ اُلْ",
+    "اَمْ اِمْ اُمْ",
+    "اَنْ اِنْ اُنْ",
+    "اَوْ اِوْ اُوْ",
+    "اَهْ اِهْ اُهْ",
+    "اَيْ اِيْ اُيْ"
+  ],
+  "progressId": "k1-l5-a2",
+  "hideProgressBar": false
+}
+  </script>
+
+  <script src="../../../../js/beta-feedback.js"></script>
+  <script src="../../../../js/letter-trainer.js"></script>
   <script src="../../../../js/pwa-register.js"></script>
 </body>
 </html>
