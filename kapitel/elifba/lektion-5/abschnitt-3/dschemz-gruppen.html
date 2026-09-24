@@ -16,21 +16,87 @@
   <main class="page">
     <nav class="nav">
       <a href="../lektion5.html">Zurück</a>
+      <button id="btn-help" class="nav-help" type="button">Hilfe</button>
     </nav>
 
     <header class="header">
       <h1>5.3 Das Dschezm in Buchstabengruppen</h1>
-      <p>Inhalt folgt.</p>
+      <p>Wörter mit Dschezm.</p>
     </header>
 
-    <div id="progress-overview" class="progress-overview"></div>
+    <section class="card trainer-card">
+      <div id="progress-bar" class="progress-bar"></div>
+      <div class="progress-row" aria-hidden="true"></div>
 
-    <section class="card">
-      <p>Hier wird die Übung später eingefügt.</p>
+      <div id="current-letter" class="letter-display">اَنْ</div>
+
+      <div class="trainer-buttons">
+        <button id="btn-audio" class="listen" type="button">Anhören</button>
+        <button id="btn-correct" class="correct" type="button">Richtig</button>
+        <button id="btn-unsure" class="unsure" type="button">Unsicher</button>
+        <button id="btn-wrong" class="wrong" type="button">Falsch</button>
+      </div>
+
+      <div id="completion" class="completion">Super! Alle Aufgaben sind gelernt.</div>
     </section>
   </main>
-  <script id="progress-meta" type="application/json">{"chapter": "elifba", "lesson": "5", "section": "l5-a3", "exercise": "k1-l5-a3", "scope": "exercise"}</script>
-  <script src="../../../../js/progress.js"></script>
+
+  <script id="letter-data" type="application/json">
+{
+  "audioBase": "../../../../audio/kapitel-1/lektion-5/abschnitt-3/K1.L5.A3.Audio",
+  "nextUrl": "../../lektion-6/abschnitt-1/erklaerung.html",
+  "homeUrl": "../../../../index.html",
+  "letters": [
+    "اَنْ",
+    "اِنْ",
+    "اِذْ",
+    "كُنْ",
+    "اَمْ",
+    "لَنْ",
+    "قُلْ",
+    "خُذْ",
+    "هُمْ",
+    "نَحْنُ",
+    "سَوْفَ",
+    "اَنْتَ",
+    "نِعْمَ",
+    "يَوْمَ",
+    "بَعْدَ",
+    "كَيْفَ",
+    "اَلَمْ تَرَ",
+    "يَرَوْنَ",
+    "اَمَرَهُمْ",
+    "اِلَيْهِمْ",
+    "بَعْدَهُمْ",
+    "اُنْزِلَتْ",
+    "قَامَتْ",
+    "اَجَلُهُمْ",
+    "مُهْتَدُونَ",
+    "لَمْ يَلِدْ",
+    "وَلَمْ يَكُنْ",
+    "نَسْتَعِينُ",
+    "اِهْدِنَا",
+    "عَلَيْهِمْ",
+    "يَشْكُرُونَ",
+    "يَجْعَلُونَ",
+    "يَعْبُدُونَ",
+    "يَخْلُقُونَ",
+    "وَجَدْتُمْ",
+    "اَرْسَلْنَا",
+    "اَنْعَمْتَ",
+    "يَرْجِعُونَ",
+    "يَعْمَهُونَ",
+    "وَلَمْ يُولَدْ",
+    "تَعْمَلُونَ",
+    "اَنْفُسَكُمْ"
+  ],
+  "progressId": "k1-l5-a3",
+  "hideProgressBar": false
+}
+  </script>
+
+  <script src="../../../../js/beta-feedback.js"></script>
+  <script src="../../../../js/letter-trainer.js"></script>
   <script src="../../../../js/pwa-register.js"></script>
 </body>
 </html>
