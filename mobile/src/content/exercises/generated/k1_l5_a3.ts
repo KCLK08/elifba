@@ -139,7 +139,7 @@ export const k1_l5_a3: ContentExercise = {
   },
   {
     id: "k1-l5-a3-card-19",
-    arabic: "اَمَرَهُمْ",
+    arabic: "اَمْرِهِمْ",
     audioId: null,
     sourcePage: 29,
     tags: [],
@@ -153,7 +153,7 @@ export const k1_l5_a3: ContentExercise = {
   },
   {
     id: "k1-l5-a3-card-21",
-    arabic: "بَعْدَهُمْ",
+    arabic: "بَعْدِهِمْ",
     audioId: null,
     sourcePage: 29,
     tags: [],
@@ -272,7 +272,7 @@ export const k1_l5_a3: ContentExercise = {
   },
   {
     id: "k1-l5-a3-card-38",
-    arabic: "يَرْجِعُونَ",
+    arabic: "يُرْجَعُونَ",
     audioId: null,
     sourcePage: 29,
     tags: [],
@@ -300,7 +300,7 @@ export const k1_l5_a3: ContentExercise = {
   },
   {
     id: "k1-l5-a3-card-42",
-    arabic: "اَنْفُسَكُمْ",
+    arabic: "اَنْفُسِكُمْ",
     audioId: null,
     sourcePage: 29,
     tags: [],
