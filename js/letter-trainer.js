@@ -1288,6 +1288,51 @@
       .replace(/'/g, "&#39;");
   }
 
+  const ARABIC_MARKS = /[\u064B-\u065F\u0670]/;
+  const ARABIC_LETTER = /[\u0621-\u063A\u0641-\u064A\u0671-\u06D3]/;
+  const NO_JOIN_NEXT = /[ادذرزوؤةىآأإء]/;
+  const TATWEEL = "\u0640";
+
+  function applyMaddYeMark(word) {
+    return String(word).replace(/ِ([يى])(?![\u064B-\u065F\u0670])/g, "ٖ$1");
+  }
+
+  function applyFinalDotlessYe(word) {
+    return String(word).replace(/([ِٖ])ي(?=\s|$)/g, "$1ى");
+  }
+
+  function addKashida(word) {
+    const chars = Array.from(String(word));
+    let out = "";
+    let i = 0;
+    while (i < chars.length) {
+      const ch = chars[i];
+      out += ch;
+      i += 1;
+      if (ch === " " || ch === "\u00A0") continue;
+      if (!ARABIC_LETTER.test(ch)) continue;
+      while (i < chars.length && ARABIC_MARKS.test(chars[i])) {
+        out += chars[i];
+        i += 1;
+      }
+      let hasTatweel = false;
+      while (i < chars.length && chars[i] === TATWEEL) {
+        out += chars[i];
+        i += 1;
+        hasTatweel = true;
+      }
+      if (hasTatweel || NO_JOIN_NEXT.test(ch)) continue;
+      if (i < chars.length && ARABIC_LETTER.test(chars[i])) {
+        out += TATWEEL;
+      }
+    }
+    return out;
+  }
+
+  function formatArabicDisplay(word) {
+    return addKashida(applyFinalDotlessYe(applyMaddYeMark(word)));
+  }
+
   function findTargetMatch(word, targetList, mode) {
     let best = null;
     targetList.forEach((t) => {
@@ -1331,7 +1376,7 @@
   }
 
   function renderWord(idx) {
-    const word = letters[idx] ?? "";
+    const word = formatArabicDisplay(letters[idx] ?? "");
     const target = targets[idx];
     if (!target) {
       if (!lispel.length && !accentGreen.length) {
